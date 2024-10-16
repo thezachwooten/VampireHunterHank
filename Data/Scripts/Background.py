@@ -44,7 +44,7 @@ class Background:
     def update_scroll(self, direction):
         """ Updates the scroll based on the player's movement direction """
         if direction == 'left' and self.scroll > 0:
-            self.scroll -= 2
+            self.scroll -= 5
         elif direction == 'right' and self.scroll < 3000:
-            self.scroll += 2
+            self.scroll += 5
 
