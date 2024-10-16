@@ -1,19 +1,25 @@
 import pygame
 import sys
 
-pygame.init()
 
-pygame.display.set_caption('Vampire Hunter Hank')
-screen = pygame.display.set_mode((640, 480))
+class Game:
+    def __init__(self):
+        pygame.init()
 
-clock = pygame.time.Clock()
+        pygame.display.set_caption('Vampire Hunter Hank')
+        self.screen = pygame.display.set_mode((640, 480))
 
-# Main Game Loop
-while True:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
+        self.clock = pygame.time.Clock()
 
-    pygame.display.update()
-    clock.tick(60)
+    def run(self):
+        # Main Game Loop
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+
+            pygame.display.update()
+            self.clock.tick(60)
+
+Game().run()
