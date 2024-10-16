@@ -3,14 +3,15 @@ import os
 
 class Background:
     # constructor
-    def __init__(self, screen, screen_width, screen_height):
+    def __init__(self, bgtype, screen, screen_width, screen_height):
         self.screen = screen
         self.screen_width = screen_width
         self.screen_height = screen_height
         self.scroll = 0
+        self.bgtype = bgtype
 
         # Load ground image and scale it
-        self.ground_image = pygame.image.load(os.path.join("Data", "Images", "Backgrounds", "PNG", "Castle", "Bright", "ground.png")).convert_alpha()
+        self.ground_image = pygame.image.load(os.path.join("Data", "Images", "Backgrounds", "PNG", self.bgtype, "Bright", "ground.png")).convert_alpha()
         self.ground_image = pygame.transform.scale(self.ground_image, (screen_width, int(screen_height * 1)))
         self.ground_width = self.ground_image.get_width()
         self.ground_height = self.ground_image.get_height()

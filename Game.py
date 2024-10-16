@@ -17,7 +17,7 @@ class Game:
         self.clock = pygame.time.Clock()
 
         # Initialize the background
-        self.background = Background(self.screen, SCREEN_WIDTH, SCREEN_HEIGHT)
+        self.background = Background('Castle', self.screen, SCREEN_WIDTH, SCREEN_HEIGHT)
     
 
     def run(self):
