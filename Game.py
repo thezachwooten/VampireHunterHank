@@ -29,7 +29,7 @@ class Game:
         self.background = Background('Castle', self.screen, SCREEN_WIDTH, SCREEN_HEIGHT)
 
         # Initialize player
-        self.player = PhysicsEntity(self, 'player', (50,50), (50,75))
+        self.player = PhysicsEntity(self, 'player', (50,200), (50,75))
     
 
     def run(self):
