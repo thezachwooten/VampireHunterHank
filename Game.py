@@ -29,7 +29,7 @@ class Game:
         self.background = Background('Castle', self.screen, SCREEN_WIDTH, SCREEN_HEIGHT)
 
         # Initialize player
-        self.player = PhysicsEntity(self, 'player', (0,self.background.ground_height), (8,15))
+        self.player = PhysicsEntity(self, 'player', (50,50), (50,75))
     
 
     def run(self):
@@ -45,11 +45,21 @@ class Game:
                     sys.exit()
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_LEFT:
-                        self.background.update_scroll('left')
                         self.movement[0] = True
                     if event.key == pygame.K_RIGHT:
                         self.movement[1] = True
-                        self.background.update_scroll('right')
+                if event.type == pygame.KEYUP:
+                    if event.key == pygame.K_LEFT:
+                        self.movement[0] = False
+                    if event.key == pygame.K_RIGHT:
+                        self.movement[1] = False
+
+            # Scroll control based on player input
+            key = pygame.key.get_pressed()
+            if key[pygame.K_LEFT]:
+                self.background.update_scroll('left')
+            if key[pygame.K_RIGHT]:
+                self.background.update_scroll('right')
 
 
             # Draw the background and ground
