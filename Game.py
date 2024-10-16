@@ -16,6 +16,7 @@ class Game:
 
         pygame.display.set_caption('Vampire Hunter Hank')
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+        self.display = pygame.Surface((SCREEN_WIDTH/2, SCREEN_HEIGHT/2))
 
         self.clock = pygame.time.Clock()
 
@@ -29,7 +30,7 @@ class Game:
         self.background = Background('Castle', self.screen, SCREEN_WIDTH, SCREEN_HEIGHT)
 
         # Initialize player
-        self.player = PhysicsEntity(self, 'player', (50,200), (50,75))
+        self.player = PhysicsEntity(self, 'player', (50,200), (8,15))
     
 
     def run(self):
@@ -71,7 +72,6 @@ class Game:
             self.player.render(self.screen)
 
 
-            # update 
             pygame.display.update()
             self.clock.tick(60)
 
