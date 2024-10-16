@@ -11,7 +11,7 @@ class Background:
 
         # Load ground image and scale it
         self.ground_image = pygame.image.load(os.path.join("Data", "Images", "Backgrounds", "PNG", "Castle", "Bright", "ground.png")).convert_alpha()
-        self.ground_image = pygame.transform.scale(self.ground_image, (screen_width, int(screen_height * 0.5)))
+        self.ground_image = pygame.transform.scale(self.ground_image, (screen_width, int(screen_height * 1)))
         self.ground_width = self.ground_image.get_width()
         self.ground_height = self.ground_image.get_height()
 
@@ -24,7 +24,7 @@ class Background:
         self.bg_width = self.bg_images[0].get_width()
 
     def draw_bg(self):
-        for x in range(7):
+        for x in range(15):
             speed = 1
             self.screen.blit(self.bg_images[0], (x * self.bg_width - self.scroll * speed, 0))
             self.screen.blit(self.bg_images[1], (x * self.bg_width - self.scroll * speed, 0))
@@ -37,7 +37,7 @@ class Background:
             speed += 0.2
 
     def draw_ground(self):
-        for x in range(10):
+        for x in range(15):
             self.screen.blit(self.ground_image, (x * self.ground_width - 2 - self.scroll * 2.2, self.screen_height - self.ground_height))
 
     def update_scroll(self, direction):
