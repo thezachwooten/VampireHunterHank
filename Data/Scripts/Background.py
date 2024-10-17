@@ -11,7 +11,7 @@ class Background:
         self.bgtype = bgtype
 
         # Load ground image and scale it
-        self.ground_image = pygame.image.load(os.path.join("Data", "Images", "Backgrounds", self.bgtype, "Bright", "ground.png")).convert_alpha()
+        self.ground_image = pygame.image.load(os.path.join("Data", "Images", "Backgrounds", self.bgtype, "ground.png")).convert_alpha()
         self.ground_image = pygame.transform.scale(self.ground_image, (screen_width, int(screen_height * 1)))
         self.ground_width = self.ground_image.get_width()
         self.ground_height = self.ground_image.get_height()
@@ -19,7 +19,7 @@ class Background:
         # Load background images and scale them
         self.bg_images = []
         for i in range(0, 6):
-            bg_image = pygame.image.load(os.path.join("Data", "Images", "Backgrounds", "Castle", "Bright", f"{i}.png")).convert_alpha()
+            bg_image = pygame.image.load(os.path.join("Data", "Images", "Backgrounds", "Castle", f"{i}.png")).convert_alpha()
             bg_image = pygame.transform.scale(bg_image, (screen_width, screen_height))
             self.bg_images.append(bg_image)
         self.bg_width = self.bg_images[0].get_width()
