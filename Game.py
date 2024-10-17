@@ -26,8 +26,10 @@ class Game:
             'player' : load_image('Player/Sprites/Converted_Vampire/Hurt.png') # temp sprite for character
         }
 
+        self.levels = ['Castle', 'Church', 'Cemetery']
+
         # Initialize the background
-        self.background = Background('Castle', self.screen, SCREEN_WIDTH, SCREEN_HEIGHT)
+        self.background = Background(self.levels[0], self.screen, SCREEN_WIDTH, SCREEN_HEIGHT)
 
         # Initialize player
         self.player = PhysicsEntity(self, 'player', (50,200), (8,15))
