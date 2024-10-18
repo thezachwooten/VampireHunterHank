@@ -57,6 +57,15 @@ class Game:
                         self.player.RIGHT_KEY, self.player.FACING_LEFT = True, False
                     elif event.key == pygame.K_SPACE:
                         self.player.jump()
+                if event.type == pygame.KEYUP:
+                    if event.key == pygame.K_LEFT:
+                        self.player.LEFT_KEY = False
+                    elif event.key == pygame.K_RIGHT:
+                        self.player.RIGHT_KEY = False
+                    elif event.key == pygame.K_SPACE:
+                        if self.player.is_jumping:
+                            self.player.velocity.y *= .25
+                            self.player.is_jumping = False
             
 
             # Scroll control based on player input
