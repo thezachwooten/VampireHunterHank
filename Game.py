@@ -5,7 +5,7 @@ from Data.Scripts.utils import * # import util scripts
 from Data.Scripts.Background import * # import code for parallax effect
 from Data.Scripts.Entities import PhysicsEntity # import code for PhysicsEntity
 from Data.Scripts.tiles import Tilemap # import tilemap code
-from Data.Scripts.Player import * # import player class
+from Data.Scripts import Player # import player class
 
 SCREEN_WIDTH = 640
 SCREEN_HEIGHT = 480
@@ -42,7 +42,7 @@ class Game:
         # Main Game Loop
         while True:
             
-            dt = self.clock.tick(60) * 0.001 * TARGET_FPS
+            self.dt = self.clock.tick(60) * 0.001 * TARGET_FPS
            
 
 
@@ -50,23 +50,9 @@ class Game:
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_LEFT:
-                        self.player.LEFT_KEY, self.player.FACING_LEFT = True, True
-                    elif event.key == pygame.K_RIGHT:
-                        self.player.RIGHT_KEY, self.player.FACING_LEFT = True, False
-                    elif event.key == pygame.K_SPACE:
-                        self.player.jump()
-                if event.type == pygame.KEYUP:
-                    if event.key == pygame.K_LEFT:
-                        self.player.LEFT_KEY = False
-                    elif event.key == pygame.K_RIGHT:
-                        self.player.RIGHT_KEY = False
-                    elif event.key == pygame.K_SPACE:
-                        if self.player.is_jumping:
-                            self.player.velocity.y *= .25
-                            self.player.is_jumping = False
-            
+                
+            # Handle player input inside the Player class
+            self.player.handle_input()
 
             # Scroll control based on player input
             key = pygame.key.get_pressed()
@@ -83,7 +69,7 @@ class Game:
             self.tile_map.draw(self.screen)
 
             # Handle player movement
-            self.player.update(dt)
+            self.player.update(self.dt)
             self.player.draw(self.screen)
 
 

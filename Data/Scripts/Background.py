@@ -27,15 +27,13 @@ class Background:
             self.bg_width = self.bg_images[0].get_width()
 
     def draw_bg(self):
-        # for Castle
+        # Draws the parallax background layers 
         for x in range(15):
-            speed = 1
-            self.screen.blit(self.bg_images[0], (x * self.bg_width - self.scroll * speed, 0))
-            speed += 0.1
-            self.screen.blit(self.bg_images[1], (x * self.bg_width - self.scroll * speed, 0))
-            speed += 0.1
-            self.screen.blit(self.bg_images[2], (x * self.bg_width - self.scroll * speed, 0))
-            speed += 0.1
+            speed = 1  # Base scroll speed
+            for i, bg_image in enumerate(self.bg_images):
+                # Increase the speed for each layer to create a parallax effect
+                self.screen.blit(bg_image, (x * self.bg_width - self.scroll * speed, 0))
+                speed += 0.1
 
     def update_scroll(self, direction):
         """ Updates the scroll based on the player's movement direction """
