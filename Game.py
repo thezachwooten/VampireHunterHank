@@ -5,9 +5,11 @@ from Data.Scripts.utils import * # import util scripts
 from Data.Scripts.Background import * # import code for parallax effect
 from Data.Scripts.Entities import PhysicsEntity # import code for PhysicsEntity
 from Data.Scripts.tiles import Tilemap # import tilemap code
+from Data.Scripts.Player import * # import player class
 
 SCREEN_WIDTH = 640
 SCREEN_HEIGHT = 480
+TARGET_FPS = 60
 
 
 
@@ -23,9 +25,7 @@ class Game:
 
         self.movement = [False, False]
 
-        self.assets = {
-            'player' : load_image('Player/Sprites/Converted_Vampire/Idle.png').subsurface(pygame.Rect(0,0,128,128)) # temp sprite for character
-        }
+        
 
         self.levels = ['Castle', 'Forest', 'Cemetery']
 
@@ -35,13 +35,14 @@ class Game:
         self.background = Background(self.levels[1], self.screen, SCREEN_WIDTH, SCREEN_HEIGHT)
 
         # Initialize player
-        self.player = PhysicsEntity(self, 'player', (50,200), (8,15))
+        self.player = Player(self)
     
 
     def run(self):
         # Main Game Loop
         while True:
             
+            dt = self.clock.tick(60) * 0.001 * TARGET_FPS
            
 
 
@@ -51,14 +52,12 @@ class Game:
                     sys.exit()
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_LEFT:
-                        self.movement[0] = True
-                    if event.key == pygame.K_RIGHT:
-                        self.movement[1] = True
-                if event.type == pygame.KEYUP:
-                    if event.key == pygame.K_LEFT:
-                        self.movement[0] = False
-                    if event.key == pygame.K_RIGHT:
-                        self.movement[1] = False
+                        self.player.LEFT_KEY, self.player.FACING_LEFT = True, True
+                    elif event.key == pygame.K_RIGHT:
+                        self.player.RIGHT_KEY, self.player.FACING_LEFT = True, False
+                    elif event.key == pygame.K_SPACE:
+                        self.player.jump()
+            
 
             # Scroll control based on player input
             key = pygame.key.get_pressed()
@@ -75,8 +74,8 @@ class Game:
             self.tile_map.draw(self.screen)
 
             # Handle player movement
-            self.player.update((self.movement[1] - self.movement[0], 0))
-            self.player.render(self.screen)
+            self.player.update(dt)
+            self.player.draw(self.screen)
 
 
             pygame.display.update()
