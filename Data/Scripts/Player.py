@@ -42,10 +42,10 @@ class Player(pygame.sprite.Sprite):
         self.velocity.y += self.acceleration.y * dt
         if self.velocity.y > 7: self.velocity.y = 7
         self.position.y += self.velocity.y * dt + (self.acceleration.y * 0.5) * (dt * dt)
-        if self.position.y > 128:
+        if self.position.y > 300:
             self.on_ground = True
             self.velocity.y = 0
-            self.position.y = 128
+            self.position.y = 300
         self.rect.bottom = self.position.y
 
     def jump(self):
