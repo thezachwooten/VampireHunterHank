@@ -4,6 +4,7 @@ import sys
 from Data.Scripts.utils import * # import util scripts
 from Data.Scripts.Background import * # import code for parallax effect
 from Data.Scripts.Entities import PhysicsEntity # import code for PhysicsEntity
+from Data.Scripts.tiles import Tilemap # import tilemap code
 
 SCREEN_WIDTH = 640
 SCREEN_HEIGHT = 480
@@ -23,13 +24,15 @@ class Game:
         self.movement = [False, False]
 
         self.assets = {
-            'player' : load_image('Player/Sprites/Converted_Vampire/Hurt.png') # temp sprite for character
+            'player' : load_image('Player/Sprites/Converted_Vampire/Idle.png').subsurface(pygame.Rect(0,0,128,128)) # temp sprite for character
         }
 
-        self.levels = ['Castle', 'Church', 'Cemetery']
+        self.levels = ['Castle', 'Forest', 'Cemetery']
+
+        self.tile_map = Tilemap("Data/Images/Tilesets/Graveyard/ForestTest.tmx") # test file 
 
         # Initialize the background
-        self.background = Background(self.levels[0], self.screen, SCREEN_WIDTH, SCREEN_HEIGHT)
+        self.background = Background(self.levels[1], self.screen, SCREEN_WIDTH, SCREEN_HEIGHT)
 
         # Initialize player
         self.player = PhysicsEntity(self, 'player', (50,200), (8,15))
@@ -67,7 +70,9 @@ class Game:
 
             # Draw the background and ground
             self.background.draw_bg()
-            self.background.draw_ground()
+
+            # Draw the tilemap
+            self.tile_map.draw(self.screen)
 
             # Handle player movement
             self.player.update((self.movement[1] - self.movement[0], 0))

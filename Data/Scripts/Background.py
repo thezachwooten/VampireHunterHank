@@ -10,38 +10,32 @@ class Background:
         self.scroll = 0
         self.bgtype = bgtype
 
-        # Load ground image and scale it [Castle]
-        self.ground_image = pygame.image.load(os.path.join("Data", "Images", "Backgrounds", self.bgtype, "ground.png")).convert_alpha()
-        self.ground_image = pygame.transform.scale(self.ground_image, (screen_width, int(screen_height * 1)))
-        self.ground_width = self.ground_image.get_width()
-        self.ground_height = self.ground_image.get_height()
+        if self.bgtype == 'Forest':
+            # Initialize the background image list
+            self.bg_images = []
 
-        # Load background images and scale them [Castle]
-        self.bg_images = []
-        for i in range(0, 6):
-            bg_image = pygame.image.load(os.path.join("Data", "Images", "Backgrounds", "Castle", f"{i}.png")).convert_alpha()
-            bg_image = pygame.transform.scale(bg_image, (screen_width, screen_height))
-            self.bg_images.append(bg_image)
-        self.bg_width = self.bg_images[0].get_width()
+            # Load background images and scale them [Forest]
+            for layer in ['back', 'middle', 'front']:
+                image_path = os.path.join("Data", "Images", "Backgrounds", self.bgtype, f"{layer}.png")
+                image = pygame.image.load(image_path).convert_alpha()
+
+                # Optionally scale the images to fit the screen dimensions
+                scaled_image = pygame.transform.scale(image, (self.screen_width, self.screen_height))
+                self.bg_images.append(scaled_image)
+
+            # Set the width of the background based on one of the images (assuming all have the same width)
+            self.bg_width = self.bg_images[0].get_width()
 
     def draw_bg(self):
         # for Castle
         for x in range(15):
             speed = 1
             self.screen.blit(self.bg_images[0], (x * self.bg_width - self.scroll * speed, 0))
+            speed += 0.1
             self.screen.blit(self.bg_images[1], (x * self.bg_width - self.scroll * speed, 0))
-            speed += 0.2
+            speed += 0.1
             self.screen.blit(self.bg_images[2], (x * self.bg_width - self.scroll * speed, 0))
-            self.screen.blit(self.bg_images[3], (x * self.bg_width - self.scroll * speed, 0))
-            speed += 0.2
-            self.screen.blit(self.bg_images[4], (x * self.bg_width - self.scroll * speed, 0))
-            self.screen.blit(self.bg_images[5], (x * self.bg_width - self.scroll * speed, 0))
-            speed += 0.2
-
-    def draw_ground(self):
-        # for castle
-        for x in range(15):
-            self.screen.blit(self.ground_image, (x * self.ground_width - 2 - self.scroll * 2.2, self.screen_height - self.ground_height))
+            speed += 0.1
 
     def update_scroll(self, direction):
         """ Updates the scroll based on the player's movement direction """
