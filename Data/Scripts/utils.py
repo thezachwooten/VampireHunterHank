@@ -10,7 +10,7 @@ def load_image(path):
 
 # Helps load and slice spritesheet
 def load_spritesheet(path, frame_width, frame_height, num_frames):
-    spritesheet = pygame.image.load(path).convert_alpha()  # Load spritesheet
+    spritesheet = pygame.image.load(BASE_IMG_PATH + path).convert_alpha()  # Load spritesheet
     frames = []
 
     for i in range(num_frames):

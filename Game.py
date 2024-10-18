@@ -35,7 +35,7 @@ class Game:
         self.background = Background(self.levels[1], self.screen, SCREEN_WIDTH, SCREEN_HEIGHT)
 
         # Initialize player
-        self.player = Player(self)
+        self.player = Player.Player(self)
     
 
     def run(self):
