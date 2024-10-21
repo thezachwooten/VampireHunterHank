@@ -30,15 +30,37 @@ class Player(pygame.sprite.Sprite):
     def draw(self, surf):
         surf.blit(self.image, (self.rect.x, self.rect.y))
 
-    def update(self, dt):
-        # move
+    def handle_collisions(self, tile_rects):
+        # Check for collisions with tiles and adjust position accordingly
+        for rect in tile_rects:
+            if self.rect.colliderect(rect):
+                # Collision detected, handle it
+                if self.velocity.y > 0:  # Falling down
+                    self.rect.bottom = rect.top  # Stop falling
+                    self.on_ground = True
+                    self.velocity.y = 0  # Reset vertical velocity
+                elif self.velocity.y < 0:  # Jumping up
+                    self.rect.top = rect.bottom  # Stop rising
+                    self.velocity.y = 0  # Reset vertical velocity
+                
+                if self.velocity.x > 0:  # Moving right
+                    self.rect.right = rect.left  # Stop moving right
+                elif self.velocity.x < 0:  # Moving left
+                    self.rect.left = rect.right  # Stop moving left
+
+    def update(self, dt, tile_rects):
+        # Move
         self.handle_input()
         self.horizontal_movement(dt)
         self.vertical_movement(dt)
 
-         # Update the current animation
+        # Handle collisions
+        self.handle_collisions(tile_rects)
+
+        # Update the current animation
         self.current_animation.update(dt)
-        self.image = self.current_animation.get_current_frame()  # Update to current frame 
+        self.image = self.current_animation.get_current_frame()
+
 
         
         
@@ -64,10 +86,6 @@ class Player(pygame.sprite.Sprite):
         self.velocity.y += self.acceleration.y * dt
         if self.velocity.y > 7: self.velocity.y = 7
         self.position.y += self.velocity.y * dt + (self.acceleration.y * 0.5) * (dt * dt)
-        if self.position.y > 300:
-            self.on_ground = True
-            self.velocity.y = 0
-            self.position.y = 300
         self.rect.bottom = self.position.y
 
     def handle_input(self):
