@@ -30,7 +30,7 @@ class Tilemap():
                     tile_properties = self.tiled_map.get_tile_properties_by_gid(gid)
                     
                     # Check for the custom attribute "collision"
-                    if tile_properties and tile_properties.get('collision', False):  # Assuming 'collision' is a boolean
+                    if tile_properties and tile_properties.get('collision', True):  # Assuming 'collision' is a boolean
                         rect = pygame.Rect(x * self.tiled_map.tilewidth, 
                                            y * self.tiled_map.tileheight, 
                                            self.tiled_map.tilewidth, 

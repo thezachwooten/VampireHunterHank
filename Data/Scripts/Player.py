@@ -30,40 +30,59 @@ class Player(pygame.sprite.Sprite):
     def draw(self, surf):
         surf.blit(self.image, (self.rect.x, self.rect.y))
 
-    def handle_collisions(self, tile_rects):
-        # Check for collisions with tiles and adjust position accordingly
-        for rect in tile_rects:
-            if self.rect.colliderect(rect):
-                # Collision detected, handle it
-                if self.velocity.y > 0:  # Falling down
-                    self.rect.bottom = rect.top  # Stop falling
-                    self.on_ground = True
-                    self.velocity.y = 0  # Reset vertical velocity
-                elif self.velocity.y < 0:  # Jumping up
-                    self.rect.top = rect.bottom  # Stop rising
-                    self.velocity.y = 0  # Reset vertical velocity
-                
-                if self.velocity.x > 0:  # Moving right
-                    self.rect.right = rect.left  # Stop moving right
-                elif self.velocity.x < 0:  # Moving left
-                    self.rect.left = rect.right  # Stop moving left
 
     def update(self, dt, tile_rects):
         # Move
         self.handle_input()
         self.horizontal_movement(dt)
+        self.check_collisionX(tile_rects)
         self.vertical_movement(dt)
-
-        # Handle collisions
-        self.handle_collisions(tile_rects)
+        self.check_collisionY(tile_rects)
+        
+        
 
         # Update the current animation
         self.current_animation.update(dt)
         self.image = self.current_animation.get_current_frame()
 
 
+    # check for collision on both axis
+    def check_collisionX(self, tile_rect):
+        collisions = self.get_hits(tile_rect)
+        for tile in collisions:
+            if self.velocity.x > 0: # Hit from right
+                self.position.x = tile.rect.left - self.rectWidth
+                self.rect.x = self.position.x
+            elif self.velocity.x < 0: # Hit from left
+                self.position.x = tile.rect.right
+                self.rect.x = self.position.x
+
         
+    def check_collisionY(self, tile_rect):
+        self.on_ground = False  # Reset on_ground before checking for collisions
+        self.rect.bottom += 1  # Add 1 pixel buffer for collision detection
+        collisions = self.get_hits(tile_rect)
         
+        for tile in collisions:
+            if self.velocity.y > 0:  # Hit from top (falling onto a tile)
+                self.on_ground = True
+                self.is_jumping = False
+                self.velocity.y = 0
+                self.rect.bottom = tile.top  # Align bottom of character to top of tile
+                self.position.y = self.rect.bottom  # Sync position with rect
+            elif self.velocity.y < 0:  # Hit from bottom (jumping into a ceiling)
+                self.velocity.y = 0
+                self.rect.top = tile.bottom  # Align top of character to bottom of tile
+                self.position.y = self.rect.bottom  # Sync position with rect
+
+
+    # Helper function for collision detection
+    def get_hits(self, tile_rect):
+        hits = []
+        for tile in tile_rect:
+            if self.rect.colliderect(tile):
+                hits.append(tile)
+        return hits
 
     def limit_velocity(self, max_vel):
         min(-max_vel, max(self.velocity.x, max_vel))
