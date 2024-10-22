@@ -13,6 +13,10 @@ class Tilemap():
                     tile = self.tiled_map.get_tile_image_by_gid(gid)
                     if tile:
                         screen.blit(tile, (x * self.tiled_map.tilewidth, y * self.tiled_map.tileheight))
+        # Debug: Draw the tile collision boxes
+        for rect in self.get_tile_rects():
+            pygame.draw.rect(screen, (255, 0, 0, 100), rect, 2)  # Red rectangle with transparency
+
 
     def get_map_size(self):
         # Returns the dimensions of the tilemap
@@ -30,7 +34,7 @@ class Tilemap():
                     tile_properties = self.tiled_map.get_tile_properties_by_gid(gid)
                     
                     # Check for the custom attribute "collision"
-                    if tile_properties and tile_properties.get('collision', True):  # Assuming 'collision' is a boolean
+                    if tile_properties and tile_properties.get('collision', False):  # Assuming 'collision' is a boolean
                         rect = pygame.Rect(x * self.tiled_map.tilewidth, 
                                            y * self.tiled_map.tileheight, 
                                            self.tiled_map.tilewidth, 

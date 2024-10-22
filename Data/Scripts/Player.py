@@ -14,21 +14,23 @@ class Player(pygame.sprite.Sprite):
         self.animations['walk'] = Animations.Animations(utils.load_spritesheet('Player/Sprites/Converted_Vampire/Walk.png', 128, 128, 8), 60)  # 8 frames at 60 fps
         self.animations['jump'] = Animations.Animations(utils.load_spritesheet('Player/Sprites/Converted_Vampire/Jump.png', 128, 128, 7), 60)  # 7 frames at 60 fps
 
-
+        self.position, self.velocity = pygame.math.Vector2(0, 0), pygame.math.Vector2(0, 0)
         self.current_animation = self.animations['idle']  # Start with idle animation
         self.image = self.current_animation.get_current_frame()
         self.rect = self.image.get_rect()
 
         self.rectWidth = 128
-        self.rectHeight = 129
+        self.rectHeight = 128
+
         self.LEFT_KEY, self.RIGHT_KEY, self.FACING_LEFT = False, False, False 
         self.is_jumping, self.on_ground = False, False
         self.gravity, self.friction = .35, -.12
-        self.position, self.velocity = pygame.math.Vector2(0, 0), pygame.math.Vector2(0, 0)
+        
         self.acceleration = pygame.math.Vector2(0, self.gravity)
 
     def draw(self, surf):
         surf.blit(self.image, (self.rect.x, self.rect.y))
+        pygame.draw.rect(surf, (255, 0, 0, 100), self.rect, 2)  # Red rectangle with transparency
 
 
     def update(self, dt, tile_rects):
@@ -51,10 +53,10 @@ class Player(pygame.sprite.Sprite):
         collisions = self.get_hits(tile_rect)
         for tile in collisions:
             if self.velocity.x > 0: # Hit from right
-                self.position.x = tile.rect.left - self.rectWidth
+                self.position.x = tile.left - self.rectWidth
                 self.rect.x = self.position.x
             elif self.velocity.x < 0: # Hit from left
-                self.position.x = tile.rect.right
+                self.position.x = tile.right
                 self.rect.x = self.position.x
 
         
