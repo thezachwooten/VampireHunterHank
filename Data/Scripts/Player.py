@@ -20,7 +20,7 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
 
         self.rectWidth = 128
-        self.rectHeight = 128
+        self.rectHeight = 129
         self.LEFT_KEY, self.RIGHT_KEY, self.FACING_LEFT = False, False, False 
         self.is_jumping, self.on_ground = False, False
         self.gravity, self.friction = .35, -.12
