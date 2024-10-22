@@ -18,7 +18,7 @@ class Game:
 
         pygame.display.set_caption('Vampire Hunter Hank')
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-        self.display = pygame.Surface((SCREEN_WIDTH/2, SCREEN_HEIGHT/2))
+    
 
         self.clock = pygame.time.Clock()
 
