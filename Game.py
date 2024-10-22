@@ -29,7 +29,7 @@ class Game:
 
         self.levels = ['Castle', 'Forest', 'Cemetery']
 
-        self.tile_map = Tilemap("Data/Images/Tilesets/Graveyard/ForestTest.tmx") # test file 
+        self.tile_map = Tilemap("Data/Images/Tilesets/Graveyard/NewTest.tmx") # test file 
 
         # Initialize the background
         self.background = Background(self.levels[1], self.screen, SCREEN_WIDTH, SCREEN_HEIGHT)
