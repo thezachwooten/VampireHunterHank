@@ -3,7 +3,6 @@ import sys
 
 from Data.Scripts.utils import * # import util scripts
 from Data.Scripts.Background import * # import code for parallax effect
-from Data.Scripts.Entities import PhysicsEntity # import code for PhysicsEntity
 from Data.Scripts.tiles import Tilemap # import tilemap code
 from Data.Scripts import Player # import player class
 
