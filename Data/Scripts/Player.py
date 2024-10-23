@@ -18,7 +18,7 @@ class Player(pygame.sprite.Sprite):
         self.current_animation = self.animations['idle']  # Start with idle animation
         self.image = self.current_animation.get_current_frame()
         self.rect = self.image.get_rect()
-        self.hitbox = self.rect.inflate(-65, -40)
+        self.hitbox = self.rect.inflate(-55, -40)
 
         self.rectWidth = 128
         self.rectHeight = 128
@@ -28,6 +28,8 @@ class Player(pygame.sprite.Sprite):
         self.gravity, self.friction = .35, -.12
         
         self.acceleration = pygame.math.Vector2(0, self.gravity)
+
+        self.health = 100 # Initilize player health to 100
 
     def draw(self, surf):
         surf.blit(self.image, (self.rect.x, self.rect.y))
@@ -39,7 +41,7 @@ class Player(pygame.sprite.Sprite):
         self.handle_input()
         self.horizontal_movement(dt)
         self.hitbox.center = self.rect.center
-        self.hitbox.x = self.position.x + 24 
+        self.hitbox.x = self.position.x + 15 
         self.check_collisionX(tile_rects)
         self.vertical_movement(dt)
         self.hitbox.center = self.rect.center
@@ -101,11 +103,11 @@ class Player(pygame.sprite.Sprite):
             self.acceleration.x -= .3
         elif self.RIGHT_KEY:
             self.acceleration.x += .3
-        self.acceleration.x += self.velocity.x * self.friction
-        self.velocity.x += self.acceleration.x * dt
-        self.limit_velocity(4)
-        self.position.x += self.velocity.x * dt + (self.acceleration.x * 0.5) * (dt * dt)
-        self.rect.x = self.position.x
+        self.acceleration.x += self.velocity.x * self.friction # Physics eq
+        self.velocity.x += self.acceleration.x * dt # Physics eq
+        self.limit_velocity(4) # limit the velocity
+        self.position.x += self.velocity.x * dt + (self.acceleration.x * 0.5) * (dt * dt) # update the position
+        self.rect.x = self.position.x # update the player image by the position
 
         
     def vertical_movement(self, dt):
