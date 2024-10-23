@@ -18,6 +18,7 @@ class Player(pygame.sprite.Sprite):
         self.current_animation = self.animations['idle']  # Start with idle animation
         self.image = self.current_animation.get_current_frame()
         self.rect = self.image.get_rect()
+        self.hitbox = self.rect.inflate(-65, -40)
 
         self.rectWidth = 128
         self.rectHeight = 128
@@ -30,15 +31,19 @@ class Player(pygame.sprite.Sprite):
 
     def draw(self, surf):
         surf.blit(self.image, (self.rect.x, self.rect.y))
-        pygame.draw.rect(surf, (255, 0, 0, 100), self.rect, 2)  # Red rectangle with transparency
+        pygame.draw.rect(surf, (255, 0, 0, 100), self.hitbox, 2)  # Red rectangle with transparency
 
 
     def update(self, dt, tile_rects):
         # Move
         self.handle_input()
         self.horizontal_movement(dt)
+        self.hitbox.center = self.rect.center
+        self.hitbox.x = self.position.x + 24 
         self.check_collisionX(tile_rects)
         self.vertical_movement(dt)
+        self.hitbox.center = self.rect.center
+        self.hitbox.y = self.position.y - self.hitbox.height
         self.check_collisionY(tile_rects)
         
         
@@ -53,7 +58,7 @@ class Player(pygame.sprite.Sprite):
         collisions = self.get_hits(tile_rect)
         for tile in collisions:
             if self.velocity.x > 0: # Hit from right
-                self.position.x = tile.left - self.rectWidth
+                self.position.x = tile.left - tile.width
                 self.rect.x = self.position.x
             elif self.velocity.x < 0: # Hit from left
                 self.position.x = tile.right
@@ -82,7 +87,7 @@ class Player(pygame.sprite.Sprite):
     def get_hits(self, tile_rect):
         hits = []
         for tile in tile_rect:
-            if self.rect.colliderect(tile):
+            if self.hitbox.colliderect(tile):
                 hits.append(tile)
         return hits
 
