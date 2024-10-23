@@ -34,6 +34,7 @@ class Player(pygame.sprite.Sprite):
     def draw(self, surf):
         surf.blit(self.image, (self.rect.x, self.rect.y))
         pygame.draw.rect(surf, (255, 0, 0, 100), self.hitbox, 2)  # Red rectangle with transparency
+        pygame.draw.rect(surf, (255, 0, 255, 100), self.rect, 1)  # rectangle with transparency
 
 
     def update(self, dt, tile_rects):
