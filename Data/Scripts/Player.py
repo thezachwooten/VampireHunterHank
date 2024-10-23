@@ -18,7 +18,7 @@ class Player(pygame.sprite.Sprite):
         self.current_animation = self.animations['idle']  # Start with idle animation
         self.image = self.current_animation.get_current_frame()
         self.rect = self.image.get_rect()
-        self.hitbox = self.rect.inflate(-55, -40)
+        self.hitbox = pygame.Rect(self.rect.x - 5, self.rect.y, 64, 85)
 
         self.rectWidth = 128
         self.rectHeight = 128
@@ -42,7 +42,7 @@ class Player(pygame.sprite.Sprite):
         self.handle_input()
         self.horizontal_movement(dt)
         self.hitbox.center = self.rect.center
-        self.hitbox.x = self.position.x + 15 
+        # self.hitbox.x = self.position.x + 15 
         self.check_collisionX(tile_rects)
         self.vertical_movement(dt)
         self.hitbox.center = self.rect.center
@@ -63,28 +63,28 @@ class Player(pygame.sprite.Sprite):
         collisions = self.get_hits(tile_rect)
         for tile in collisions:
             if self.velocity.x > 0: # Hit from right
-                self.position.x = tile.left - tile.width
-                self.rect.x = self.position.x
+                self.position.x = tile.left - self.hitbox.width
+                self.hitbox.x = self.position.x
             elif self.velocity.x < 0: # Hit from left
                 self.position.x = tile.right
-                self.rect.x = self.position.x
+                self.hitbox.x = self.position.x
 
         
     def check_collisionY(self, tile_rect):
         self.on_ground = False  # Reset on_ground before checking for collisions
         self.rect.bottom += 1  # Add 1 pixel buffer for collision detection
         collisions = self.get_hits(tile_rect)
-        
+
         for tile in collisions:
-            if self.velocity.y > 0:  # Hit from top (falling onto a tile)
+            if self.velocity.y > 0:  # Hit from the top (falling onto a tile)
                 self.on_ground = True
                 self.is_jumping = False
-                self.velocity.y = 0
-                self.rect.bottom = tile.top  # Align bottom of character to top of tile
+                self.velocity.y = 0  # Stop downward velocity
+                self.rect.bottom = tile.top  # Align bottom of player with top of tile
                 self.position.y = self.rect.bottom  # Sync position with rect
-            elif self.velocity.y < 0:  # Hit from bottom (jumping into a ceiling)
-                self.velocity.y = 0
-                self.rect.top = tile.bottom  # Align top of character to bottom of tile
+            elif self.velocity.y < 0:  # Hit from the bottom (jumping into a ceiling)
+                self.velocity.y = 0  # Stop upward velocity
+                self.rect.top = tile.bottom  # Align top of player with bottom of tile
                 self.position.y = self.rect.bottom  # Sync position with rect
 
 
