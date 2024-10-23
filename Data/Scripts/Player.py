@@ -54,6 +54,8 @@ class Player(pygame.sprite.Sprite):
         # Update the current animation
         self.current_animation.update(dt)
         self.image = self.current_animation.get_current_frame()
+        if self.FACING_LEFT == True:
+            self.image = pygame.transform.flip(self.image,1,0)
 
 
     # check for collision on both axis
