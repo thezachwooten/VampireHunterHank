@@ -68,8 +68,9 @@ class Game:
             self.tile_map.draw(self.screen)
 
             # Handle player movement
-            tile_rects = self.tile_map.get_tile_rects()  # Get tile rectangles for tiles that have collision
-            self.player.update(self.dt, tile_rects) # update player
+            # tile_rects = self.tile_map.get_tile_rects()  # Get tile rectangles for tiles that have collision
+            tile_sprites = self.tile_map.get_tile_objects_with_masks()  # Get the tiles with rects and masks
+            self.player.update(self.dt, tile_sprites)  # Update the player with masked tiles
             self.player.draw(self.screen) # draw player to screen
 
 

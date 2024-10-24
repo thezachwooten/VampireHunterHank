@@ -18,7 +18,9 @@ class Player(pygame.sprite.Sprite):
         self.current_animation = self.animations['idle']  # Start with idle animation
         self.image = self.current_animation.get_current_frame()
         self.rect = self.image.get_rect()
-        self.hitbox = pygame.Rect(self.rect.x - 5, self.rect.y, 64, 85)
+        
+        # Create a mask for the player based on the current frame
+        self.mask = pygame.mask.from_surface(self.image)
 
         self.rectWidth = 128
         self.rectHeight = 128
@@ -33,20 +35,15 @@ class Player(pygame.sprite.Sprite):
 
     def draw(self, surf):
         surf.blit(self.image, (self.rect.x, self.rect.y))
-        pygame.draw.rect(surf, (255, 0, 0, 100), self.hitbox, 2)  # Red rectangle with transparency
-        pygame.draw.rect(surf, (255, 0, 255, 100), self.rect, 1)  # rectangle with transparency
 
 
     def update(self, dt, tile_rects):
         # Move
         self.handle_input()
         self.horizontal_movement(dt)
-        self.hitbox.center = self.rect.center
         # self.hitbox.x = self.position.x + 15 
         self.check_collisionX(tile_rects)
         self.vertical_movement(dt)
-        self.hitbox.center = self.rect.center
-        self.hitbox.y = self.position.y - self.hitbox.height
         self.check_collisionY(tile_rects)
         
         
@@ -57,42 +54,43 @@ class Player(pygame.sprite.Sprite):
         if self.FACING_LEFT == True:
             self.image = pygame.transform.flip(self.image,1,0)
 
+        # Update the player's mask whenever the image changes
+        self.mask = pygame.mask.from_surface(self.image)
+
 
     # check for collision on both axis
-    def check_collisionX(self, tile_rect):
-        collisions = self.get_hits(tile_rect)
+    def check_collisionX(self, tile_sprites):
+        collisions = self.get_hits(tile_sprites)
         for tile in collisions:
             if self.velocity.x > 0: # Hit from right
-                self.position.x = tile.left - self.hitbox.width
-                self.hitbox.x = self.position.x
+                self.position.x = tile.rect.left
             elif self.velocity.x < 0: # Hit from left
-                self.position.x = tile.right
-                self.hitbox.x = self.position.x
+                self.position.x = tile.rect.right
 
         
-    def check_collisionY(self, tile_rect):
+    def check_collisionY(self, tile_sprites):
         self.on_ground = False  # Reset on_ground before checking for collisions
         self.rect.bottom += 1  # Add 1 pixel buffer for collision detection
-        collisions = self.get_hits(tile_rect)
+        collisions = self.get_hits(tile_sprites)
 
         for tile in collisions:
             if self.velocity.y > 0:  # Hit from the top (falling onto a tile)
                 self.on_ground = True
                 self.is_jumping = False
                 self.velocity.y = 0  # Stop downward velocity
-                self.rect.bottom = tile.top  # Align bottom of player with top of tile
+                self.rect.bottom = tile.rect.top  # Align bottom of player with top of tile
                 self.position.y = self.rect.bottom  # Sync position with rect
             elif self.velocity.y < 0:  # Hit from the bottom (jumping into a ceiling)
                 self.velocity.y = 0  # Stop upward velocity
-                self.rect.top = tile.bottom  # Align top of player with bottom of tile
+                self.rect.top = tile.rect.bottom  # Align top of player with bottom of tile
                 self.position.y = self.rect.bottom  # Sync position with rect
 
 
     # Helper function for collision detection
-    def get_hits(self, tile_rect):
+    def get_hits(self, tile_sprites):
         hits = []
-        for tile in tile_rect:
-            if self.hitbox.colliderect(tile):
+        for tile in tile_sprites:
+            if pygame.sprite.collide_mask(self, tile):
                 hits.append(tile)
         return hits
 
