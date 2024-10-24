@@ -17,6 +17,9 @@ class Ghoul():
         self.current_animation = self.animations['idle']  # Start with idle animation
         self.image = self.current_animation.get_current_frame()
         self.rect = self.image.get_rect()
+        
+        # Create a mask for the player based on the current frame
+        self.mask = pygame.mask.from_surface(self.image)
 
         self.LEFT_KEY, self.RIGHT_KEY, self.FACING_LEFT = False, False, False 
         self.is_jumping, self.on_ground = False, False
