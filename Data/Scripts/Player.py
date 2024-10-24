@@ -41,7 +41,6 @@ class Player(pygame.sprite.Sprite):
         # Move
         self.handle_input()
         self.horizontal_movement(dt)
-        # self.hitbox.x = self.position.x + 15 
         self.check_collisionX(tile_rects)
         self.vertical_movement(dt)
         self.check_collisionY(tile_rects)
@@ -57,20 +56,31 @@ class Player(pygame.sprite.Sprite):
         # Update the player's mask whenever the image changes
         self.mask = pygame.mask.from_surface(self.image)
 
+    # Helper functions for returning size of mask
+    def get_mask_width(self):
+        return self.mask.get_size()[0]  # Returns the width of the mask
+    def get_mask_height(self):
+        return self.mask.get_size()[1]  # Returns the width of the mask
 
-    # check for collision on both axis
+
+
     def check_collisionX(self, tile_sprites):
         collisions = self.get_hits(tile_sprites)
         for tile in collisions:
-            if self.velocity.x > 0: # Hit from right
-                self.position.x = tile.rect.left
-            elif self.velocity.x < 0: # Hit from left
-                self.position.x = tile.rect.right
+            if self.velocity.x > 0:  # Moving right
+                # Stop at the left edge of the tile
+                self.position.x = tile.rect.left - self.get_mask_width()  # Prevent overlap
+                self.rect.x = self.position.x  # Update rect position
+                self.velocity.x = 0 # stop movement
+            elif self.velocity.x < 0:  # Moving left
+                # Stop at the right edge of the tile
+                self.position.x = tile.rect.right  # Prevent overlap
+                self.rect.x = self.position.x  # Update rect position
+                self.velocity.x = 0 # stop movement
 
         
     def check_collisionY(self, tile_sprites):
         self.on_ground = False  # Reset on_ground before checking for collisions
-        self.rect.bottom += 1  # Add 1 pixel buffer for collision detection
         collisions = self.get_hits(tile_sprites)
 
         for tile in collisions:
