@@ -35,8 +35,9 @@ class Player(pygame.sprite.Sprite):
         self.health = 100 # Initilize player health to 100
 
     def draw(self, surf):
-        surf.blit(self.image, (self.rect.x - self.get_mask_width(), self.rect.y))
+        surf.blit(self.image, (self.rect.x - self.get_mask_width(), self.rect.y - self.get_mask_height() + 25))
         pygame.draw.rect(surf, (255,0,0), self.rect, 2) # rect around player image
+        pygame.draw.rect(surf, (255,255,0), self.bound_rect, 2) # rect around player image
 
 
     def update(self, dt, tile_rects):
@@ -58,6 +59,7 @@ class Player(pygame.sprite.Sprite):
     # Helper function to update image/mask
     def update_image(self):
         # Create the mask and bounding rect based on the current image
+        
         self.mask = pygame.mask.from_surface(self.image)
         self.bound_rect = self.mask.get_bounding_rects()[0]
         self.image = self.image.subsurface(self.bound_rect).copy()
