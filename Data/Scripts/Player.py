@@ -14,7 +14,7 @@ class Player(pygame.sprite.Sprite):
         self.animations['walk'] = Animations.Animations(utils.load_spritesheet('Player/Sprites/Converted_Vampire/Walk.png', 128, 128, 8), 60)  # 8 frames at 60 fps
         self.animations['jump'] = Animations.Animations(utils.load_spritesheet('Player/Sprites/Converted_Vampire/Jump.png', 128, 128, 7), 60)  # 7 frames at 60 fps
 
-        self.position, self.velocity = pygame.math.Vector2(0, 0), pygame.math.Vector2(0, 0)
+        self.position, self.velocity = pygame.math.Vector2(100, 0), pygame.math.Vector2(0, 0)
         self.current_animation = self.animations['idle']  # Start with idle animation
         self.image = self.current_animation.get_current_frame()
         self.rect = self.image.get_rect()
@@ -23,7 +23,7 @@ class Player(pygame.sprite.Sprite):
         self.mask = pygame.mask.from_surface(self.image)
         self.bound_rect = self.mask.get_bounding_rects()[0]
         self.image = self.image.subsurface(self.bound_rect).copy()
-        self.rect = self.image.get_rect(topleft=self.position)
+        self.rect = self.image.get_rect()
 
         self.rectWidth = 128
         self.rectHeight = 128
@@ -37,7 +37,7 @@ class Player(pygame.sprite.Sprite):
         self.health = 100 # Initilize player health to 100
 
     def draw(self, surf):
-        surf.blit(self.image, (self.rect.x, self.rect.y))
+        surf.blit(self.image, (self.rect.x - self.get_mask_width(), self.rect.y))
         pygame.draw.rect(surf, (255,0,0), self.rect, 2) # rect around player image
 
 
@@ -56,12 +56,6 @@ class Player(pygame.sprite.Sprite):
         self.image = self.current_animation.get_current_frame()
         if self.FACING_LEFT == True:
             self.image = pygame.transform.flip(self.image,1,0)
-
-        # Create the mask and bounding rect based on the current image
-        self.mask = pygame.mask.from_surface(self.image)
-        self.bound_rect = self.mask.get_bounding_rects()[0]
-        self.image = self.image.subsurface(self.bound_rect).copy()
-        self.rect = self.image.get_rect(topleft=self.position)
 
     # Helper functions for returning size of mask
     def get_mask_width(self):
@@ -88,7 +82,6 @@ class Player(pygame.sprite.Sprite):
         
     def check_collisionY(self, tile_sprites):
         self.on_ground = False  # Reset on_ground before checking for collisions
-        self.rect.bottom += 1
         collisions = self.get_hits(tile_sprites)
 
         for tile in collisions:
@@ -96,7 +89,7 @@ class Player(pygame.sprite.Sprite):
                 self.on_ground = True
                 self.is_jumping = False
                 self.velocity.y = 0  # Stop downward velocity
-                self.rect.bottom = tile.rect.top - self.rect.h  # Align bottom of player with top of tile
+                self.rect.bottom = tile.rect.top   # Align bottom of player with top of tile
                 self.position.y = self.rect.bottom  # Sync position with rect
             elif self.velocity.y < 0:  # Hit from the bottom (jumping into a ceiling)
                 self.velocity.y = 0  # Stop upward velocity
@@ -144,17 +137,37 @@ class Player(pygame.sprite.Sprite):
         if keys[pygame.K_LEFT]:
             self.LEFT_KEY, self.FACING_LEFT = True, True
             self.current_animation = self.animations['walk']  # Switch to walking animation
+            # Create the mask and bounding rect based on the current image
+            self.mask = pygame.mask.from_surface(self.image)
+            self.bound_rect = self.mask.get_bounding_rects()[0]
+            self.image = self.image.subsurface(self.bound_rect).copy()
+            self.rect = self.image.get_rect()
         elif keys[pygame.K_RIGHT]:
             self.RIGHT_KEY, self.FACING_LEFT = True, False
             self.current_animation = self.animations['walk']  # Switch to walking animation
+            # Create the mask and bounding rect based on the current image
+            self.mask = pygame.mask.from_surface(self.image)
+            self.bound_rect = self.mask.get_bounding_rects()[0]
+            self.image = self.image.subsurface(self.bound_rect).copy()
+            self.rect = self.image.get_rect()
         else:
             # Switch to idle animation if not moving and on the ground
             if self.on_ground:
                 self.current_animation = self.animations['idle']
+                # Create the mask and bounding rect based on the current image
+                self.mask = pygame.mask.from_surface(self.image)
+                self.bound_rect = self.mask.get_bounding_rects()[0]
+                self.image = self.image.subsurface(self.bound_rect).copy()
+                self.rect = self.image.get_rect()
 
         if keys[pygame.K_SPACE] and self.on_ground:
             self.jump()  # Trigger jump
             self.current_animation = self.animations['jump']  # Switch to jump animation
+            # Create the mask and bounding rect based on the current image
+            self.mask = pygame.mask.from_surface(self.image)
+            self.bound_rect = self.mask.get_bounding_rects()[0]
+            self.image = self.image.subsurface(self.bound_rect).copy()
+            self.rect = self.image.get_rect()
     
 
     def jump(self):
