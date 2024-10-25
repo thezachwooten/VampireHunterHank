@@ -88,6 +88,7 @@ class Player(pygame.sprite.Sprite):
         
     def check_collisionY(self, tile_sprites):
         self.on_ground = False  # Reset on_ground before checking for collisions
+        self.rect.bottom += 1
         collisions = self.get_hits(tile_sprites)
 
         for tile in collisions:
@@ -95,7 +96,7 @@ class Player(pygame.sprite.Sprite):
                 self.on_ground = True
                 self.is_jumping = False
                 self.velocity.y = 0  # Stop downward velocity
-                self.rect.bottom = tile.rect.top  # Align bottom of player with top of tile
+                self.rect.bottom = tile.rect.top - self.rect.h  # Align bottom of player with top of tile
                 self.position.y = self.rect.bottom  # Sync position with rect
             elif self.velocity.y < 0:  # Hit from the bottom (jumping into a ceiling)
                 self.velocity.y = 0  # Stop upward velocity
