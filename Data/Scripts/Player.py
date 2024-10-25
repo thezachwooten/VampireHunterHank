@@ -35,6 +35,7 @@ class Player(pygame.sprite.Sprite):
 
     def draw(self, surf):
         surf.blit(self.image, (self.rect.x, self.rect.y))
+        pygame.draw.rect(surf, (255,0,0), self.rect, 2) # rect around player image
 
 
     def update(self, dt, tile_rects):
@@ -74,7 +75,7 @@ class Player(pygame.sprite.Sprite):
                 self.velocity.x = 0 # stop movement
             elif self.velocity.x < 0:  # Moving left
                 # Stop at the right edge of the tile
-                self.position.x = tile.rect.right  # Prevent overlap
+                self.position.x = tile.rect.right # Prevent overlap
                 self.rect.x = self.position.x  # Update rect position
                 self.velocity.x = 0 # stop movement
 
