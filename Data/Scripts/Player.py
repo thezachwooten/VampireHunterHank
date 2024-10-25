@@ -19,8 +19,11 @@ class Player(pygame.sprite.Sprite):
         self.image = self.current_animation.get_current_frame()
         self.rect = self.image.get_rect()
         
-        # Create a mask for the player based on the current frame
+        # Create the mask and bounding rect based on the current image
         self.mask = pygame.mask.from_surface(self.image)
+        self.bound_rect = self.mask.get_bounding_rects()[0]
+        self.image = self.image.subsurface(self.bound_rect).copy()
+        self.rect = self.image.get_rect(topleft=self.position)
 
         self.rectWidth = 128
         self.rectHeight = 128
@@ -54,8 +57,11 @@ class Player(pygame.sprite.Sprite):
         if self.FACING_LEFT == True:
             self.image = pygame.transform.flip(self.image,1,0)
 
-        # Update the player's mask whenever the image changes
+        # Create the mask and bounding rect based on the current image
         self.mask = pygame.mask.from_surface(self.image)
+        self.bound_rect = self.mask.get_bounding_rects()[0]
+        self.image = self.image.subsurface(self.bound_rect).copy()
+        self.rect = self.image.get_rect(topleft=self.position)
 
     # Helper functions for returning size of mask
     def get_mask_width(self):
