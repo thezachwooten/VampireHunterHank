@@ -169,5 +169,5 @@ class Player(pygame.sprite.Sprite):
     def jump(self):
         if self.on_ground:
             self.is_jumping = True
-            self.velocity.y -= 8
+            self.velocity.y -= 10
             self.on_ground = False
