@@ -5,6 +5,7 @@ from Data.Scripts.utils import * # import util scripts
 from Data.Scripts.Background import * # import code for parallax effect
 from Data.Scripts.tiles import Tilemap # import tilemap code
 from Data.Scripts import Player # import player class
+from Data.Scripts import Camera # import camera class
 
 SCREEN_WIDTH = 640
 SCREEN_HEIGHT = 480
@@ -29,6 +30,10 @@ class Game:
         self.levels = ['Castle', 'Forest', 'Cemetery']
 
         self.tile_map = Tilemap("Data/Images/Tilesets/Graveyard/NewTest.tmx") # test file 
+
+        # initialize camera
+        self.camera = Camera.Camera(SCREEN_WIDTH, SCREEN_HEIGHT)
+        self.map_width, self.map_height = self.tile_map.get_map_size()
 
         # Initialize the background
         self.background = Background(self.levels[1], self.screen, SCREEN_WIDTH, SCREEN_HEIGHT)
@@ -64,15 +69,15 @@ class Game:
             # Draw the background and ground
             self.background.draw_bg()
 
-            # Draw the tilemap
-            self.tile_map.draw(self.screen)
-
             # Handle player movement
             # tile_rects = self.tile_map.get_tile_rects()  # Get tile rectangles for tiles that have collision
             tile_sprites = self.tile_map.get_tile_objects_with_masks()  # Get the tiles with rects and masks
-            self.player.update(self.dt, tile_sprites)  # Update the player with masked tiles
-            self.player.draw(self.screen) # draw player to screen
-
+            # Draw tilemap and player with camera offset
+            self.player.update(self.dt, tile_sprites)
+            self.player.draw(self.screen, self.camera)
+            # Update camera position based on the player
+            self.camera.update(self.player, self.map_width, self.map_height)
+            self.tile_map.draw(self.screen, self.camera)
 
             pygame.display.update()
             self.clock.tick(60)

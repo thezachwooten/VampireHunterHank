@@ -34,10 +34,11 @@ class Player(pygame.sprite.Sprite):
 
         self.health = 100 # Initilize player health to 100
 
-    def draw(self, surf):
-        surf.blit(self.image, (self.rect.x - self.get_mask_width(), self.rect.y - self.get_mask_height() + 25))
-        pygame.draw.rect(surf, (255,0,0), self.rect, 2) # rect around player image
-        pygame.draw.rect(surf, (255,255,0), self.bound_rect, 2) # rect around player image
+    def draw(self, surf, camera):
+        # Draw the player image using the camera offset
+        surf.blit(self.image, camera.apply(self.rect))
+        pygame.draw.rect(surf, (255, 0, 0), camera.apply(self.rect), 2)  # Debug: rect around player image
+        pygame.draw.rect(surf, (255, 255, 0), camera.apply(self.bound_rect), 2)  # Debug: bounding rect
 
 
     def update(self, dt, tile_rects):

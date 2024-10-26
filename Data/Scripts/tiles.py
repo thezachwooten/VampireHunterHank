@@ -12,17 +12,20 @@ class Tilemap():
         # Load the TMX file using pytmx
         self.tiled_map = pytmx.load_pygame(tmx_file)
 
-    def draw(self, screen):
-        # Draw the tilemap on the screen
+    def draw(self, screen, camera):
+        # Draw the tilemap on the screen with camera offset
         for layer in self.tiled_map.visible_layers:
             if isinstance(layer, pytmx.TiledTileLayer):
                 for x, y, gid in layer:
                     tile = self.tiled_map.get_tile_image_by_gid(gid)
                     if tile:
-                        screen.blit(tile, (x * self.tiled_map.tilewidth, y * self.tiled_map.tileheight))
-        # Debug: Draw the tile collision boxes
-        for rect in self.get_tile_rects():
-            pygame.draw.rect(screen, (255, 0, 0, 100), rect, 2)  # Red rectangle with transparency
+                        # Apply the camera offset when drawing each tile
+                        screen.blit(tile, camera.apply(pygame.Rect(
+                            x * self.tiled_map.tilewidth,
+                            y * self.tiled_map.tileheight,
+                            self.tiled_map.tilewidth,
+                            self.tiled_map.tileheight
+                        )))
 
 
     def get_map_size(self):
