@@ -49,10 +49,32 @@ class Tilemap():
                         tile_rects.append(rect)
         return tile_rects
     
-    def get_tile_objects_with_masks(self):
-        """Returns a group of tiles as sprites with rects and masks for collision."""
+    def get_tile_objects_with_masks(self, layer_name=None, property_name="collision"):
+        """Returns a group of tiles as sprites with rects and masks for collision.
+        Can filter by layer name and property name.
+        """
         tile_sprites = pygame.sprite.Group()  # Use a sprite group to hold Tile objects
         for layer in self.tiled_map.visible_layers:
+            # Filter by layer name if specified
+            if isinstance(layer, pytmx.TiledTileLayer) and (layer_name is None or layer.name == layer_name):
+                for x, y, gid in layer:
+                    tile_image = self.tiled_map.get_tile_image_by_gid(gid)
+                    tile_properties = self.tiled_map.get_tile_properties_by_gid(gid)
+                    
+                    # Only process tiles with the specified property
+                    if tile_image and tile_properties and tile_properties.get(property_name, False):
+                        tile = Tile(tile_image, 
+                                    x * self.tiled_map.tilewidth, 
+                                    y * self.tiled_map.tileheight, 
+                                    self.tiled_map.tilewidth, 
+                                    self.tiled_map.tileheight)
+                        tile_sprites.add(tile)  # Add the tile to the sprite group
+        return tile_sprites  # Return sprite group with masks for pixel-perfect collision
+    
+    def get_objects_with_masks(self):
+        """Returns a group of tiles as sprites with rects and masks for collision."""
+        object_sprites = pygame.sprite.Group()  # Use a sprite group to hold Tile objects
+        for layer in self.tiled_map.objects:
             if isinstance(layer, pytmx.TiledTileLayer):
                 for x, y, gid in layer:
                     tile_image = self.tiled_map.get_tile_image_by_gid(gid)
@@ -66,5 +88,5 @@ class Tilemap():
                                     y * self.tiled_map.tileheight, 
                                     self.tiled_map.tilewidth, 
                                     self.tiled_map.tileheight)
-                        tile_sprites.add(tile)  # Add the tile to the sprite group
-        return tile_sprites  # Return sprite group with masks for pixel-perfect collision
+                        object_sprites.add(tile)  # Add the tile to the sprite group
+        return object_sprites 
