@@ -79,14 +79,15 @@ class Player(pygame.sprite.Sprite):
         for tile in collisions:
             if self.velocity.x > 0:  # Moving right
                 # Stop at the left edge of the tile
-                self.position.x = tile.rect.left - self.get_mask_width()  # Prevent overlap
-                self.rect.x = self.position.x  # Update rect position
                 self.velocity.x = 0 # stop movement
+                self.position.x = tile.rect.left - self.get_mask_width() - 5  # Prevent overlap
+                self.rect.x = self.position.x  # Update rect position
             elif self.velocity.x < 0:  # Moving left
                 # Stop at the right edge of the tile
+                self.velocity.x = 0 # stop movement
                 self.position.x = tile.rect.right # Prevent overlap
                 self.rect.x = self.position.x  # Update rect position
-                self.velocity.x = 0 # stop movement
+                
 
         
     def check_collisionY(self, tile_sprites):
