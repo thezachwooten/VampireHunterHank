@@ -28,16 +28,16 @@ class Game:
 
         
 
-        self.levels = ['Castle', 'Forest', 'Cemetery']
+        self.levels = ['Forest', 'Cemetery', 'Castle']
 
-        self.tile_map = Tilemap("Data/Images/Tilesets/Graveyard/NewTest.tmx") # test file 
+        self.tile_map = Tilemap("Data/Images/Tilesets/" + self.levels[0] + "/NewTest.tmx") # test file 
 
         # initialize camera
         self.camera = Camera.Camera(SCREEN_WIDTH, SCREEN_HEIGHT)
         self.map_width, self.map_height = self.tile_map.get_map_size()
 
         # Initialize the background
-        self.background = Background(self.levels[1], self.screen, SCREEN_WIDTH, SCREEN_HEIGHT)
+        self.background = Background(self.levels[0], self.screen, SCREEN_WIDTH, SCREEN_HEIGHT)
 
         # Initialize player
         self.player = Player.Player(self)
