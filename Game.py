@@ -5,6 +5,7 @@ from Data.Scripts.utils import * # import util scripts
 from Data.Scripts.Background import * # import code for parallax effect
 from Data.Scripts.tiles import Tilemap # import tilemap code
 from Data.Scripts import Player # import player class
+from Data.Scripts import Ghoul # import ghoul class
 from Data.Scripts import Camera # import camera class
 
 SCREEN_WIDTH = 640
@@ -40,6 +41,7 @@ class Game:
 
         # Initialize player
         self.player = Player.Player(self)
+        self.ghoul = Ghoul.Ghoul(self)
 
         self.ground_tiles = self.tile_map.get_tile_objects_with_masks(layer_name="Ground", property_name="collision")  # Get the tiles with rects and masks
         self.painting_tiles = self.tile_map.get_tile_objects_with_masks(layer_name="Paintings", property_name="collision")  # Get the tiles with rects and masks
@@ -77,6 +79,7 @@ class Game:
             # Draw tilemap and player with camera offset
             self.player.update(self.dt, self.ground_tiles, self.painting_tiles)
             self.player.draw(self.screen, self.camera)
+            self.ghoul.draw(self.screen, self.camera)
             # Update camera position based on the player
             self.camera.update(self.player, self.map_width, self.map_height)
             # Draw Map
