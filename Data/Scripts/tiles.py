@@ -13,20 +13,11 @@ class Tilemap():
         self.tiled_map = pytmx.load_pygame(tmx_file)
         self.name = None
 
-    def draw(self, screen, camera):
-        # Draw the tilemap on the screen with camera offset
-        for layer in self.tiled_map.visible_layers:
-            if isinstance(layer, pytmx.TiledTileLayer):
-                for x, y, gid in layer:
-                    tile = self.tiled_map.get_tile_image_by_gid(gid)
-                    if tile:
-                        # Apply the camera offset when drawing each tile
-                        screen.blit(tile, camera.apply(pygame.Rect(
-                            x * self.tiled_map.tilewidth,
-                            y * self.tiled_map.tileheight,
-                            self.tiled_map.tilewidth,
-                            self.tiled_map.tileheight
-                        )))
+    def draw(self, screen, camera, tile_group):
+        """Draws the specified tile group on the screen with camera offset."""
+        for tile in tile_group:
+            # Draw each tile with the camera offset applied
+            screen.blit(tile.image, camera.apply(tile.rect))
 
 
     def get_map_size(self):

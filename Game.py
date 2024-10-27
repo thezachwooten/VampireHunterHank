@@ -72,13 +72,15 @@ class Game:
             # Handle player movement
             # tile_rects = self.tile_map.get_tile_rects()  # Get tile rectangles for tiles that have collision
             ground_tiles = self.tile_map.get_tile_objects_with_masks(layer_name="Ground", property_name="collision")  # Get the tiles with rects and masks
+            painting_tiles = self.tile_map.get_tile_objects_with_masks(layer_name="Paintings", property_name="collision")  # Get the tiles with rects and masks
             # Draw tilemap and player with camera offset
             self.player.update(self.dt, ground_tiles)
             self.player.draw(self.screen, self.camera)
             # Update camera position based on the player
             self.camera.update(self.player, self.map_width, self.map_height)
             # Draw Map
-            self.tile_map.draw(self.screen, self.camera)
+            self.tile_map.draw(self.screen, self.camera, ground_tiles)
+            self.tile_map.draw(self.screen, self.camera, painting_tiles)
 
             pygame.display.update()
             self.clock.tick(60)
