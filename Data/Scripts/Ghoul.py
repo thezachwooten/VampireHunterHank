@@ -21,6 +21,8 @@ class Ghoul():
         self.update_image() # update ghoul image/mask
 
         self.FACING_LEFT = False
+        self.MOVE_LEFT = False
+        self.MOVE_RIGHT = False
         self.on_ground = False
         self.gravity, self.friction = .35, -.12
         
@@ -43,3 +45,29 @@ class Ghoul():
         self.image = pygame.transform.scale2x(self.image)
         self.rect = self.image.get_rect()
         self.rect.center = self.position
+
+    def update(self, dt):
+        self.horizontal_movement(dt)
+
+    def limit_velocity(self, max_vel):
+        min(-max_vel, max(self.velocity.x, max_vel))
+        if abs(self.velocity.x) < .01: self.velocity.x = 0
+
+    # method to move horizontally 
+    def horizontal_movement(self, dt):
+        self.acceleration.x = 0
+        if self.MOVE_LEFT:
+            self.acceleration.x -= .3
+            self.FACING_LEFT = True
+        elif self.MOVE_RIGHT:
+            self.acceleration.x += .3
+            self.FACING_LEFT = False
+        self.acceleration.x += self.velocity.x * self.friction # Physics eq
+        self.velocity.x += self.acceleration.x * dt # Physics eq
+        self.limit_velocity(2) # limit the velocity
+        self.position.x += self.velocity.x * dt + (self.acceleration.x * 0.5) * (dt * dt) # update the position
+        self.rect.x = self.position.x # update the player image by the position
+
+    # method to handle basic movement logic
+    def move_ai(self):
+        pass

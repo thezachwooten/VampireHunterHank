@@ -86,6 +86,7 @@ class Game:
             # Draw tilemap and player with camera offset
             self.player.update(self.dt, self.ground_tiles, self.painting_tiles)
             self.player.draw(self.screen, self.camera)
+            self.ghoul.update(self.dt)
             self.ghoul.draw(self.screen, self.camera)
             # Update camera position based on the player
             self.camera.update(self.player, self.map_width, self.map_height)
