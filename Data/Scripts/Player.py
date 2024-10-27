@@ -40,14 +40,16 @@ class Player(pygame.sprite.Sprite):
         pygame.draw.rect(surf, (255, 0, 0), camera.apply(self.rect), 2)  # Debug: rect around player image
 
 
-    def update(self, dt, tile_rects):
+    def update(self, dt, ground_tile, paintings):
         # Move
         self.handle_input()
         self.horizontal_movement(dt)
-        self.check_collisionX(tile_rects)
+        self.check_collisionX(ground_tile)
         self.vertical_movement(dt)
-        self.check_collisionY(tile_rects)
-        
+        self.check_collisionY(ground_tile)
+
+        # painting collision
+        self.paintHits(paintings)
         
 
         # Update the current animation
@@ -172,3 +174,11 @@ class Player(pygame.sprite.Sprite):
             self.is_jumping = True
             self.velocity.y -= 10
             self.on_ground = False
+
+    # method for dealing with painting collisions
+    def paintHits(self, paintings):
+        collisions = self.get_hits(paintings)  # Get the collided paintings
+
+        for painting in collisions:
+            if not painting.collected:  # Check if it's already collected
+                painting.remove()  # Mark as collected

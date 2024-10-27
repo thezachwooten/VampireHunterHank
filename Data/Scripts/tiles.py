@@ -6,6 +6,11 @@ class Tile(pygame.sprite.Sprite):
         self.image = image
         self.rect = pygame.Rect(x, y, width, height)
         self.mask = pygame.mask.from_surface(image)  # Create a mask from the image surface
+        self.collected = False
+
+    def remove(self):
+        """Mark the tile as collected."""
+        self.collected = True
 
 class Tilemap():
     def __init__(self, tmx_file):
@@ -16,8 +21,9 @@ class Tilemap():
     def draw(self, screen, camera, tile_group):
         """Draws the specified tile group on the screen with camera offset."""
         for tile in tile_group:
-            # Draw each tile with the camera offset applied
-            screen.blit(tile.image, camera.apply(tile.rect))
+            if not tile.collected:  # Only draw tiles that are not collected
+                # Draw each tile with the camera offset applied
+                screen.blit(tile.image, camera.apply(tile.rect))
 
 
     def get_map_size(self):
