@@ -20,6 +20,9 @@ class Ghoul():
         
         self.update_image() # update ghoul image/mask
 
+        self.last_move_time = 0
+        self.state = 'pause'  # Start in the "move_left" state
+        self.previous_state = 'move_left'
         self.FACING_LEFT = False
         self.MOVE_LEFT = False
         self.MOVE_RIGHT = False
@@ -48,6 +51,7 @@ class Ghoul():
 
     def update(self, dt):
         self.horizontal_movement(dt)
+        self.move_ai()
 
     def limit_velocity(self, max_vel):
         min(-max_vel, max(self.velocity.x, max_vel))
@@ -68,6 +72,33 @@ class Ghoul():
         self.position.x += self.velocity.x * dt + (self.acceleration.x * 0.5) * (dt * dt) # update the position
         self.rect.x = self.position.x # update the player image by the position
 
-    # method to handle basic movement logic
     def move_ai(self):
-        pass
+        current_time = pygame.time.get_ticks()  # Get the current time in milliseconds
+
+        # Pause state
+        if self.state == 'pause':
+            self.MOVE_LEFT = False
+            self.MOVE_RIGHT = False
+            if current_time - self.last_move_time >= 2000:  # 2 seconds
+                self.last_move_time = current_time
+                # Toggle between moving left and right after each pause
+                self.state = 'move_right' if self.previous_state == 'move_left' else 'move_left'
+                self.previous_state = self.state  # Update the previous state for tracking
+
+        # Move left state
+        elif self.state == 'move_left':
+            self.MOVE_LEFT = True
+            self.MOVE_RIGHT = False
+            if current_time - self.last_move_time >= 2000:  # 2 seconds
+                self.MOVE_LEFT = False
+                self.last_move_time = current_time
+                self.state = 'pause'  # Switch to "pause" state
+
+        # Move right state
+        elif self.state == 'move_right':
+            self.MOVE_LEFT = False
+            self.MOVE_RIGHT = True
+            if current_time - self.last_move_time >= 2000:  # 2 seconds
+                self.MOVE_RIGHT = False
+                self.last_move_time = current_time
+                self.state = 'pause'  # Switch to "pause" state
