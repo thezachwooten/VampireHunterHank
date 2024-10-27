@@ -30,7 +30,9 @@ class Game:
 
         self.levels = ['Forest', 'Cemetery', 'Castle']
 
-        self.tile_map = Tilemap("Data/Images/Tilesets/" + self.levels[0] + "/NewTest.tmx") # test file 
+        self.curLevel = 0
+
+        self.tile_map = Tilemap("Data/Images/Tilesets/" + self.levels[self.curLevel] + "/NewTest.tmx") # test file 
 
         # initialize camera
         self.camera = Camera.Camera(SCREEN_WIDTH, SCREEN_HEIGHT)
