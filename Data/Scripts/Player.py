@@ -38,7 +38,6 @@ class Player(pygame.sprite.Sprite):
         # Draw the player image using the camera offset
         surf.blit(self.image, camera.apply(self.rect))
         pygame.draw.rect(surf, (255, 0, 0), camera.apply(self.rect), 2)  # Debug: rect around player image
-        pygame.draw.rect(surf, (255, 255, 0), camera.apply(self.bound_rect), 2)  # Debug: bounding rect
 
 
     def update(self, dt, tile_rects):

@@ -11,6 +11,7 @@ class Tilemap():
     def __init__(self, tmx_file):
         # Load the TMX file using pytmx
         self.tiled_map = pytmx.load_pygame(tmx_file)
+        self.name = None
 
     def draw(self, screen, camera):
         # Draw the tilemap on the screen with camera offset
@@ -34,24 +35,6 @@ class Tilemap():
         height = self.tiled_map.height * self.tiled_map.tileheight
         return width, height
     
-    def get_tile_rects(self):
-        #Return a list of rectangles for specific tiles in the tilemap 
-        tile_rects = []
-        for layer in self.tiled_map.visible_layers:
-            if isinstance(layer, pytmx.TiledTileLayer):
-                for x, y, gid in layer:
-                    # Check the properties directly from the tile set
-                    tile_properties = self.tiled_map.get_tile_properties_by_gid(gid)
-                    
-                    # Check for the custom attribute "collision"
-                    if tile_properties and tile_properties.get('collision', False):  # Assuming 'collision' is a boolean
-                        rect = pygame.Rect(x * self.tiled_map.tilewidth, 
-                                           y * self.tiled_map.tileheight, 
-                                           self.tiled_map.tilewidth, 
-                                           self.tiled_map.tileheight)
-                        tile_rects.append(rect)
-        return tile_rects
-    
     def get_tile_objects_with_masks(self, layer_name=None, property_name="collision"):
         """Returns a group of tiles as sprites with rects and masks for collision.
         Can filter by layer name and property name.
@@ -66,30 +49,15 @@ class Tilemap():
                     
                     # Only process tiles with the specified property
                     if tile_image and tile_properties and tile_properties.get(property_name, False):
+                        # Create a Tile instance with position and size
                         tile = Tile(tile_image, 
                                     x * self.tiled_map.tilewidth, 
                                     y * self.tiled_map.tileheight, 
                                     self.tiled_map.tilewidth, 
                                     self.tiled_map.tileheight)
+                        
+                        # Assign a mask to the tile for pixel-perfect collision
+                        tile.mask = pygame.mask.from_surface(tile.image)
+                        
                         tile_sprites.add(tile)  # Add the tile to the sprite group
         return tile_sprites  # Return sprite group with masks for pixel-perfect collision
-    
-    def get_objects_with_masks(self):
-        """Returns a group of tiles as sprites with rects and masks for collision."""
-        object_sprites = pygame.sprite.Group()  # Use a sprite group to hold Tile objects
-        for layer in self.tiled_map.objects:
-            if isinstance(layer, pytmx.TiledTileLayer):
-                for x, y, gid in layer:
-                    tile_image = self.tiled_map.get_tile_image_by_gid(gid)
-                    tile_properties = self.tiled_map.get_tile_properties_by_gid(gid)
-                    
-                    # Only process tiles with the 'collision' property
-                    if tile_image and tile_properties and tile_properties.get('collision', False):
-                        # Create a Tile object with image, rect, and mask
-                        tile = Tile(tile_image, 
-                                    x * self.tiled_map.tilewidth, 
-                                    y * self.tiled_map.tileheight, 
-                                    self.tiled_map.tilewidth, 
-                                    self.tiled_map.tileheight)
-                        object_sprites.add(tile)  # Add the tile to the sprite group
-        return object_sprites 
