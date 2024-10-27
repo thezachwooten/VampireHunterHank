@@ -4,7 +4,7 @@ from Data.Scripts import Animations
 
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, game):
+    def __init__(self, game, position=(0,0)):
         pygame.sprite.Sprite.__init__(self)
         self.game = game
 
@@ -15,16 +15,16 @@ class Player(pygame.sprite.Sprite):
         self.animations['walk'] = Animations.Animations(utils.load_spritesheet('Player/Sprites/Converted_Vampire/Walk.png', 128, 128, 8), 60)  # 8 frames at 60 fps
         self.animations['jump'] = Animations.Animations(utils.load_spritesheet('Player/Sprites/Converted_Vampire/Jump.png', 128, 128, 7), 60)  # 7 frames at 60 fps
 
-        self.position, self.velocity = pygame.math.Vector2(100, 0), pygame.math.Vector2(0, 0)
+        self.position, self.velocity = pygame.math.Vector2(position[0], position[1]), pygame.math.Vector2(0, 0)
         self.current_animation = self.animations['idle']  # Start with idle animation
         self.image = self.current_animation.get_current_frame()
-        self.rect = self.image.get_rect()
+        self.rect = self.image.get_rect(topleft = position)
         
         # Create the mask and bounding rect based on the current image
         self.update_image()
-
-        self.rectWidth = 128
-        self.rectHeight = 128
+        self.rect.x = position[0]
+        self.rect.y = position[1]
+        
 
         self.LEFT_KEY, self.RIGHT_KEY, self.FACING_LEFT = False, False, False 
         self.is_jumping, self.on_ground = False, False

@@ -41,14 +41,18 @@ class Game:
         # Initialize the background
         self.background = Background(self.levels[0], self.screen, SCREEN_WIDTH, SCREEN_HEIGHT)
 
-        # Initialize player
-        self.player = Player.Player(self)
-        self.ghoul = Ghoul.Ghoul(self)
+        
 
         self.ground_tiles = self.tile_map.get_tile_objects_with_masks(layer_name="Ground", property_name="collision")  # Get the tiles with rects and masks
         self.painting_tiles = self.tile_map.get_tile_objects_with_masks(layer_name="Paintings", property_name="collision")  # Get the tiles with rects and masks
         self.playerSpawner = self.tile_map.get_tile_objects_with_masks(layer_name="Spawners", property_name="player")  # Get the tiles with rects and masks
-        self.skeletonSpawner = self.tile_map.get_tile_objects_with_masks(layer_name="Spawners", property_name="skeleton")  # Get the tiles with rects and masks
+        self.ghouldSpawner = self.tile_map.get_tile_objects_with_masks(layer_name="Spawners", property_name="ghoul")  # Get the tiles with rects and masks
+
+        player_start_pos = next(iter(self.playerSpawner))  # Get the first (and only) sprite
+        start_x, start_y = player_start_pos.rect.x, player_start_pos.rect.y  # Access position
+        # Initialize player
+        self.player = Player.Player(self,(start_x,start_y))
+        self.ghoul = Ghoul.Ghoul(self)
 
     def run(self):
         # Main Game Loop
