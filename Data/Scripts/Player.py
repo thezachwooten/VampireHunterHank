@@ -18,8 +18,11 @@ class Player(pygame.sprite.Sprite):
 
         self.position, self.velocity = pygame.math.Vector2(position[0], position[1]), pygame.math.Vector2(0, 0)
         self.current_animation = self.animations['idle']  # Start with idle animation
+        
         self.image = self.current_animation.get_current_frame()
-        self.rect = self.image.get_rect(topleft = position)
+        self.rect = self.image.get_rect(center = position)
+        self.offsetRect = self.rect.copy() # offset rect
+        
         
         # Create the mask and bounding rect based on the current image
         self.update_image()
@@ -40,8 +43,18 @@ class Player(pygame.sprite.Sprite):
         self.last_attack_time = 0
 
     def draw(self, surf, camera):
-        # Draw the player image using the camera offset
-        surf.blit(self.image, camera.apply(self.rect))
+        # Fix offsets facing left
+        if self.FACING_LEFT:
+            self.offsetRect = self.rect.copy()
+            self.offsetRect.x -= self.rect.width 
+            self.offsetRect.y -= self.rect.height - 25
+        else:
+            # Fix offsets facing right
+            self.offsetRect = self.rect.copy()
+            self.offsetRect.x -= self.rect.width - 15
+            self.offsetRect.y -= self.rect.height - 25
+        # Draw the player image using the camera offset 
+        surf.blit(self.image, camera.apply(self.offsetRect))
         pygame.draw.rect(surf, (255, 0, 0), camera.apply(self.rect), 2)  # Debug: rect around player image
 
 
@@ -64,21 +77,22 @@ class Player(pygame.sprite.Sprite):
         # painting collision
         self.paintHits(paintings)
         
-
+        
         # Update the current animation
         self.current_animation.update(dt)
         self.image = self.current_animation.get_current_frame()
         if self.FACING_LEFT == True:
             self.image = pygame.transform.flip(self.image,1,0)
+        
 
     # Helper function to update image/mask
     def update_image(self):
-        # Create the mask and bounding rect based on the current image
-        
+        # Create the mask and bounding rect based on the current image 
         self.mask = pygame.mask.from_surface(self.image)
         self.bound_rect = self.mask.get_bounding_rects()[0]
         self.image = self.image.subsurface(self.bound_rect).copy()
         self.rect = self.image.get_rect()
+        
 
     # Helper functions for returning size of mask
     def get_mask_width(self):
