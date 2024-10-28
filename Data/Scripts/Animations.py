@@ -16,3 +16,7 @@ class Animations:
 
     def get_current_frame(self):
         return self.frames[self.current_frame]  # Return the current frame to draw
+    
+    def get_duration(self):
+        # Calculate duration in milliseconds
+        return len(self.frames) * (1000 // self.frame_rate)

@@ -14,6 +14,7 @@ class Player(pygame.sprite.Sprite):
         self.animations['idle'] = Animations.Animations(utils.load_spritesheet('Player/Sprites/Converted_Vampire/idle.png', 128, 128, 5), 60)  # 5 frames at 60 fps
         self.animations['walk'] = Animations.Animations(utils.load_spritesheet('Player/Sprites/Converted_Vampire/Walk.png', 128, 128, 8), 60)  # 8 frames at 60 fps
         self.animations['jump'] = Animations.Animations(utils.load_spritesheet('Player/Sprites/Converted_Vampire/Jump.png', 128, 128, 7), 60)  # 7 frames at 60 fps
+        self.animations['attack'] = Animations.Animations(utils.load_spritesheet('Player/Sprites/Converted_Vampire/Attack_2.png', 128, 128, 3), 60)  # 3 frames at 60 fps
 
         self.position, self.velocity = pygame.math.Vector2(position[0], position[1]), pygame.math.Vector2(0, 0)
         self.current_animation = self.animations['idle']  # Start with idle animation
@@ -34,19 +35,31 @@ class Player(pygame.sprite.Sprite):
 
         self.health = 100 # Initilize player health to 100
 
+        self.is_attacking = False
+        self.attack_cooldown = 500  # cooldown in milliseconds
+        self.last_attack_time = 0
+
     def draw(self, surf, camera):
         # Draw the player image using the camera offset
         surf.blit(self.image, camera.apply(self.rect))
         pygame.draw.rect(surf, (255, 0, 0), camera.apply(self.rect), 2)  # Debug: rect around player image
 
 
-    def update(self, dt, ground_tile, paintings):
+    def update(self, dt, ground_tile, paintings, enemies):
         # Move
         self.handle_input()
         self.horizontal_movement(dt)
         self.check_collisionX(ground_tile)
         self.vertical_movement(dt)
         self.check_collisionY(ground_tile)
+
+        # Only check for collisions if attacking
+        if self.is_attacking:
+            self.check_attack_hits(enemies)
+
+        # Reset attack status after animation duration
+        if pygame.time.get_ticks() - self.last_attack_time >= self.current_animation.get_duration():
+            self.is_attacking = False
 
         # painting collision
         self.paintHits(paintings)
@@ -155,6 +168,8 @@ class Player(pygame.sprite.Sprite):
             self.current_animation = self.animations['walk']  # Switch to walking animation
             # Create the mask and bounding rect based on the current image
             self.update_image()
+        elif keys[pygame.K_z]:
+            self.attack() # attack method
         else:
             # Switch to idle animation if not moving and on the ground
             if self.on_ground:
@@ -182,3 +197,24 @@ class Player(pygame.sprite.Sprite):
         for painting in collisions:
             if not painting.collected:  # Check if it's already collected
                 painting.remove()  # Mark as collected
+
+    # method for attacking
+    def attack(self):
+        current_time = pygame.time.get_ticks()
+        if current_time - self.last_attack_time >= self.attack_cooldown:
+            self.is_attacking = True
+            self.last_attack_time = current_time
+            self.current_animation = self.animations['attack']
+    
+    # method for checking attack hits
+    def check_attack_hits(self, enemies):
+        for enemy in enemies:
+            if pygame.sprite.collide_mask(self, enemy):
+                if self.FACING_LEFT:
+                    if self.rect.left - enemy.rect.right < 20:  # Check distance to the enemy
+                        enemy.health -= 10  # Damage dealt
+                        print("Enemy hit! Health:", enemy.health)
+                else:
+                    if enemy.rect.left - self.rect.right < 20:
+                        enemy.health -= 10
+                        print("Enemy hit! Health:", enemy.health)

@@ -89,7 +89,7 @@ class Game:
             # Handle player movement
             # tile_rects = self.tile_map.get_tile_rects()  # Get tile rectangles for tiles that have collision
             # Draw tilemap and player with camera offset
-            self.player.update(self.dt, self.ground_tiles, self.painting_tiles)
+            self.player.update(self.dt, self.ground_tiles, self.painting_tiles, self.ghouls)
             self.player.draw(self.screen, self.camera)
             for ghoul in self.ghouls:
                 ghoul.update(self.dt)
