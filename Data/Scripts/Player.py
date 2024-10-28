@@ -66,13 +66,12 @@ class Player(pygame.sprite.Sprite):
         self.vertical_movement(dt)
         self.check_collisionY(ground_tile)
 
-        # Only check for collisions if attacking
         if self.is_attacking:
             self.check_attack_hits(enemies)
 
-        # Reset attack status after animation duration
-        if pygame.time.get_ticks() - self.last_attack_time >= self.current_animation.get_duration():
+        if self.is_attacking and self.current_animation.is_finished:
             self.is_attacking = False
+            self.current_animation.reset()  # Reset animation for next attack
 
         # painting collision
         self.paintHits(paintings)
@@ -172,30 +171,31 @@ class Player(pygame.sprite.Sprite):
         # Reset movement keys
         self.LEFT_KEY, self.RIGHT_KEY = False, False
 
-        if keys[pygame.K_LEFT]:
-            self.LEFT_KEY, self.FACING_LEFT = True, True
-            self.current_animation = self.animations['walk']  # Switch to walking animation
-            # Create the mask and bounding rect based on the current image
-            self.update_image()
-        elif keys[pygame.K_RIGHT]:
-            self.RIGHT_KEY, self.FACING_LEFT = True, False
-            self.current_animation = self.animations['walk']  # Switch to walking animation
-            # Create the mask and bounding rect based on the current image
-            self.update_image()
-        elif keys[pygame.K_z]:
-            self.attack() # attack method
-        else:
-            # Switch to idle animation if not moving and on the ground
-            if self.on_ground:
-                self.current_animation = self.animations['idle']
-                # Create the mask and bounding rect based on the current image
+        # Only allow movement or idle animations if not attacking
+        if not self.is_attacking:
+            if keys[pygame.K_LEFT]:
+                self.LEFT_KEY, self.FACING_LEFT = True, True
+                self.current_animation = self.animations['walk']
+                self.update_image()
+            elif keys[pygame.K_RIGHT]:
+                self.RIGHT_KEY, self.FACING_LEFT = True, False
+                self.current_animation = self.animations['walk']
+                self.update_image()
+            else:
+                # Switch to idle if on ground and not moving
+                if self.on_ground:
+                    self.current_animation = self.animations['idle']
+                    self.update_image()
+
+            # Start the jump if on the ground and space is pressed
+            if keys[pygame.K_SPACE] and self.on_ground:
+                self.jump()
+                self.current_animation = self.animations['jump']
                 self.update_image()
 
-        if keys[pygame.K_SPACE] and self.on_ground:
-            self.jump()  # Trigger jump
-            self.current_animation = self.animations['jump']  # Switch to jump animation
-            # Create the mask and bounding rect based on the current image
-            self.update_image()
+        # Start attack if Z key is pressed and not currently attacking
+        if keys[pygame.K_z] and not self.is_attacking:
+            self.attack()
     
 
     def jump(self):
@@ -212,13 +212,13 @@ class Player(pygame.sprite.Sprite):
             if not painting.collected:  # Check if it's already collected
                 painting.remove()  # Mark as collected
 
-    # method for attacking
     def attack(self):
         current_time = pygame.time.get_ticks()
-        if current_time - self.last_attack_time >= self.attack_cooldown:
+        if not self.is_attacking and current_time - self.last_attack_time >= self.attack_cooldown:
             self.is_attacking = True
             self.last_attack_time = current_time
             self.current_animation = self.animations['attack']
+            self.current_animation.reset()  # Reset animation to start from frame 0
     
     # method for checking attack hits
     def check_attack_hits(self, enemies):
