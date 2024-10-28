@@ -14,7 +14,7 @@ class Player(pygame.sprite.Sprite):
         self.animations['idle'] = Animations.Animations(utils.load_spritesheet('Player/Sprites/Converted_Vampire/idle.png', 128, 128, 5), 60)  # 5 frames at 60 fps
         self.animations['walk'] = Animations.Animations(utils.load_spritesheet('Player/Sprites/Converted_Vampire/Walk.png', 128, 128, 8), 60)  # 8 frames at 60 fps
         self.animations['jump'] = Animations.Animations(utils.load_spritesheet('Player/Sprites/Converted_Vampire/Jump.png', 128, 128, 7), 60)  # 7 frames at 60 fps
-        self.animations['attack'] = Animations.Animations(utils.load_spritesheet('Player/Sprites/Converted_Vampire/Attack_2.png', 128, 128, 3), 60)  # 3 frames at 60 fps
+        self.animations['attack'] = Animations.Animations(utils.load_spritesheet('Player/Sprites/Converted_Vampire/Attack_2.png', 128, 128, 3), 60, False)  # 3 frames at 60 fps
 
         self.position, self.velocity = pygame.math.Vector2(position[0], position[1]), pygame.math.Vector2(0, 0)
         self.current_animation = self.animations['idle']  # Start with idle animation
@@ -171,30 +171,32 @@ class Player(pygame.sprite.Sprite):
         # Reset movement keys
         self.LEFT_KEY, self.RIGHT_KEY = False, False
 
-        # Only allow movement or idle animations if not attacking
-        if not self.is_attacking:
-            if keys[pygame.K_LEFT]:
-                self.LEFT_KEY, self.FACING_LEFT = True, True
-                self.current_animation = self.animations['walk']
-                self.update_image()
-            elif keys[pygame.K_RIGHT]:
-                self.RIGHT_KEY, self.FACING_LEFT = True, False
-                self.current_animation = self.animations['walk']
-                self.update_image()
-            else:
-                # Switch to idle if on ground and not moving
-                if self.on_ground:
-                    self.current_animation = self.animations['idle']
-                    self.update_image()
+        if self.is_attacking:
+            return  # Exit early if attacking to prevent movement and other actions
 
-            # Start the jump if on the ground and space is pressed
-            if keys[pygame.K_SPACE] and self.on_ground:
-                self.jump()
-                self.current_animation = self.animations['jump']
+        # Only allow movement or idle animations if not attacking
+        if keys[pygame.K_LEFT]:
+            self.LEFT_KEY, self.FACING_LEFT = True, True
+            self.current_animation = self.animations['walk']  # Switch to walking animation
+            self.update_image()
+        elif keys[pygame.K_RIGHT]:
+            self.RIGHT_KEY, self.FACING_LEFT = True, False
+            self.current_animation = self.animations['walk']  # Switch to walking animation
+            self.update_image()
+        else:
+            # Switch to idle animation if not moving and on the ground
+            if self.on_ground:
+                self.current_animation = self.animations['idle']
                 self.update_image()
+
+        # Start the jump if on the ground and space is pressed
+        if keys[pygame.K_SPACE] and self.on_ground:
+            self.jump()
+            self.current_animation = self.animations['jump']  # Switch to jump animation
+            self.update_image()
 
         # Start attack if Z key is pressed and not currently attacking
-        if keys[pygame.K_z] and not self.is_attacking:
+        if keys[pygame.K_z]:
             self.attack()
     
 
@@ -218,7 +220,8 @@ class Player(pygame.sprite.Sprite):
             self.is_attacking = True
             self.last_attack_time = current_time
             self.current_animation = self.animations['attack']
-            self.current_animation.reset()  # Reset animation to start from frame 0
+            self.update_image()
+            # Do not reset here; let the update method handle the animation progression
     
     # method for checking attack hits
     def check_attack_hits(self, enemies):
