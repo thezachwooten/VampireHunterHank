@@ -225,13 +225,19 @@ class Player(pygame.sprite.Sprite):
     
     # method for checking attack hits
     def check_attack_hits(self, enemies):
-        for enemy in enemies:
-            if pygame.sprite.collide_mask(self, enemy):
-                if self.FACING_LEFT:
-                    if self.rect.left - enemy.rect.right < 20:  # Check distance to the enemy
-                        enemy.health -= 10  # Damage dealt
-                        print("Enemy hit! Health:", enemy.health)
-                else:
-                    if enemy.rect.left - self.rect.right < 20:
-                        enemy.health -= 10
-                        print("Enemy hit! Health:", enemy.health)
+        for enemy in enemies[:]:  # Iterate over a copy of the list
+            if enemy.health > 0:  # Only check if the enemy is alive
+                if pygame.sprite.collide_mask(self, enemy):
+                    if self.FACING_LEFT:
+                        if self.rect.left - enemy.rect.right < 20:  # Check distance to the enemy
+                            enemy.health -= 10  # Damage dealt
+                            print("Enemy hit! Health:", enemy.health)
+                    else:
+                        if enemy.rect.left - self.rect.right < 20:
+                            enemy.health -= 10
+                            print("Enemy hit! Health:", enemy.health)
+
+                    # Check if enemy health is now zero or below
+                    if enemy.health <= 0:
+                        print("Enemy has died!")
+                        enemies.remove(enemy)  # Remove dead enemy from the list
