@@ -49,13 +49,13 @@ class Ghoul():
         self.rect = self.image.get_rect()
         self.rect.center = self.position
 
-        # check if health reaches zero
-        if self.health <= 0:
-            self.kill()
 
     def update(self, dt):
         self.horizontal_movement(dt)
         self.move_ai()
+        # check if health reaches zero
+        if self.health <= 0:
+            self.kill()
 
     def limit_velocity(self, max_vel):
         min(-max_vel, max(self.velocity.x, max_vel))

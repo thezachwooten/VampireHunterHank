@@ -52,7 +52,12 @@ class Game:
         start_x, start_y = player_start_pos.rect.x, player_start_pos.rect.y  # Access position
         # Initialize player
         self.player = Player.Player(self,(start_x,start_y))
-        self.ghoul = Ghoul.Ghoul(self)
+        # loop ghoul spawner
+        self.ghouls = []
+        for ghoulspawn in self.ghouldSpawner:
+            start_x, start_y = ghoulspawn.rect.x, ghoulspawn.rect.y  # Access position
+            ghoul = Ghoul.Ghoul(self, (start_x,start_y))
+            self.ghouls.append(ghoul)
 
     def run(self):
         # Main Game Loop
@@ -86,8 +91,9 @@ class Game:
             # Draw tilemap and player with camera offset
             self.player.update(self.dt, self.ground_tiles, self.painting_tiles)
             self.player.draw(self.screen, self.camera)
-            self.ghoul.update(self.dt)
-            self.ghoul.draw(self.screen, self.camera)
+            for ghoul in self.ghouls:
+                ghoul.update(self.dt)
+                ghoul.draw(self.screen, self.camera)
             # Update camera position based on the player
             self.camera.update(self.player, self.map_width, self.map_height)
             # Draw Map
