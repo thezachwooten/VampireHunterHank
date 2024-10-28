@@ -2,7 +2,7 @@ import pygame
 from Data.Scripts import utils
 from Data.Scripts import Animations
 
-class Ghoul():
+class Ghoul(pygame.sprite.Sprite):
     def __init__(self, game, position=(0,0)):
         super().__init__()  # Initialize the Sprite parent class
         self.game = game
@@ -32,6 +32,7 @@ class Ghoul():
         self.acceleration = pygame.math.Vector2(0, self.gravity)
 
         self.health = 100 # Initilize ghoul health to 100
+        self.isDead = False
 
     def draw(self, surf, camera):
         # Draw the ghoul image using the camera offset

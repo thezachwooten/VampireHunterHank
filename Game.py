@@ -91,10 +91,13 @@ class Game:
             # Draw tilemap and player with camera offset
             self.player.update(self.dt, self.ground_tiles, self.painting_tiles, self.ghouls)
             self.player.draw(self.screen, self.camera)
-            for ghoul in self.ghouls:
+            # Update ghouls
+            for ghoul in self.ghouls[:]:  # Iterate over a copy of the list
                 ghoul.update(self.dt)
-                ghoul.draw(self.screen, self.camera)
-            # Update camera position based on the player
+                if ghoul.health <= 0:  # Check if the ghoul is dead
+                    ghoul.kill()  # Remove from groups
+                else:
+                    ghoul.draw(self.screen, self.camera)  # Draw if alive
             self.camera.update(self.player, self.map_width, self.map_height)
             # Draw Map
             self.tile_map.draw(self.screen, self.camera, self.ground_tiles)
