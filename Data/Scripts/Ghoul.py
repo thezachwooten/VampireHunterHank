@@ -3,7 +3,7 @@ from Data.Scripts import utils
 from Data.Scripts import Animations
 
 class Ghoul():
-    def __init__(self, game):
+    def __init__(self, game, position=(0,0)):
         pygame.sprite.Sprite.__init__(self)
         self.game = game
 
@@ -13,7 +13,7 @@ class Ghoul():
         self.animations['idle'] = Animations.Animations(utils.load_spritesheet('Enemies/Ghoul/Idle.png', 32, 32, 4), 60)  # 5 frames at 60 fps
         self.animations['walk'] = Animations.Animations(utils.load_spritesheet('Enemies/Ghoul/Walk.png', 32, 32, 8), 60)  # 5 frames at 60 fps
 
-        self.position, self.velocity = pygame.math.Vector2(200, 200), pygame.math.Vector2(0, 0)
+        self.position, self.velocity = pygame.math.Vector2(position[0], position[1]), pygame.math.Vector2(0, 0)
         self.current_animation = self.animations['idle']  # Start with idle animation
         self.image = self.current_animation.get_current_frame()
         self.rect = self.image.get_rect()
@@ -48,6 +48,10 @@ class Ghoul():
         self.image = pygame.transform.scale2x(self.image)
         self.rect = self.image.get_rect()
         self.rect.center = self.position
+
+        # check if health reaches zero
+        if self.health <= 0:
+            self.kill()
 
     def update(self, dt):
         self.horizontal_movement(dt)
