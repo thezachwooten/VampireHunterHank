@@ -41,7 +41,7 @@ class Game:
         self.map_width, self.map_height = self.tile_map.get_map_size()
 
         # Initialize the background
-        self.background = Background(self.levels[2], self.screen, SCREEN_WIDTH, SCREEN_HEIGHT)
+        self.background = Background(self.levels[0], self.screen, SCREEN_WIDTH, SCREEN_HEIGHT)
 
         
 
@@ -49,6 +49,7 @@ class Game:
         self.painting_tiles = self.tile_map.get_tile_objects_with_masks(layer_name="Paintings", property_name="collision")  # Get the tiles with rects and masks
         self.playerSpawner = self.tile_map.get_tile_objects_with_masks(layer_name="Spawners", property_name="player")  # Get the tiles with rects and masks
         self.ghouldSpawner = self.tile_map.get_tile_objects_with_masks(layer_name="Spawners", property_name="ghoul")  # Get the tiles with rects and masks
+        self.skeletonSpawner = self.tile_map.get_tile_objects_with_masks(layer_name="Spawners", property_name="skeleton")  # Get the tiles with rects and masks
 
         player_start_pos = next(iter(self.playerSpawner))  # Get the first (and only) sprite
         start_x, start_y = player_start_pos.rect.x, player_start_pos.rect.y  # Access position
@@ -61,7 +62,11 @@ class Game:
             ghoul = Ghoul.Ghoul(self, (start_x,start_y))
             self.ghouls.append(ghoul)
         # skeleton
-        self.skeleton = Skeleton.Skeleton(self,(100,100))
+        self.skeletons = []
+        for skeletonSpawn in self.skeletonSpawner:
+            start_x, start_y = skeletonSpawn.rect.x, skeletonSpawn.rect.y # Access position
+            skeleton = Skeleton.Skeleton(self, (start_x,start_y))
+            self.skeletons.append(skeleton)
 
     # method to check if game is over
     def checkGameOver(self):
@@ -108,8 +113,12 @@ class Game:
                 else:
                     ghoul.draw(self.screen, self.camera)  # Draw if alive
             # Update Skeletons
-            self.skeleton.draw(self.screen, self.camera)
-            self.skeleton.update(self.dt)
+            for skeleton in self.skeletons[:]:
+                self.skeleton.update(self.dt)
+                if skeleton.health <= 0:
+                    skeleton.kill()
+                else:
+                    self.skeleton.draw(self.screen, self.camera)
             # Update Camera
             self.camera.update(self.player, self.map_width, self.map_height)
             # Draw Map
