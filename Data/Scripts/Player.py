@@ -42,6 +42,9 @@ class Player(pygame.sprite.Sprite):
         self.attack_cooldown = 500  # cooldown in milliseconds
         self.last_attack_time = 0
 
+        # level related events
+        self.foundPainting = 0 # default to not having map painting
+
     def draw(self, surf, camera):
         # Fix offsets facing left
         if self.FACING_LEFT:
