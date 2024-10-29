@@ -41,7 +41,7 @@ class Game:
         self.map_width, self.map_height = self.tile_map.get_map_size()
 
         # Initialize the background
-        self.background = Background(self.levels[0], self.screen, SCREEN_WIDTH, SCREEN_HEIGHT)
+        self.background = Background(self.levels[self.curLevel], self.screen, SCREEN_WIDTH, SCREEN_HEIGHT)
 
         
 
@@ -70,7 +70,20 @@ class Game:
 
     # method to check if game is over
     def checkGameOver(self):
-        pass
+        if self.player.health <= 0:
+            print("Game Over")
+    # method to switch to next level
+    def nextLevel(self):
+        # check if on last level
+        if self.curLevel == len(self.levels):
+            print("On last level")
+        else:
+            # increment level
+            self.curLevel += 1
+            # reset background to curLevel
+            self.background = Background(self.levels[0], self.screen, SCREEN_WIDTH, SCREEN_HEIGHT)
+            # change map
+            self.tile_map = Tilemap("Data/Images/Tilesets/" + self.levels[self.curLevel] + "/NewTest.tmx") # test file 
     
     # Main Game method
     def run(self):
