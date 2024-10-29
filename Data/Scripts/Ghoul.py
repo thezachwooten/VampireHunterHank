@@ -3,6 +3,7 @@ from Data.Scripts import utils
 from Data.Scripts import Animations
 
 class Ghoul(pygame.sprite.Sprite):
+    # Constructor
     def __init__(self, game, position=(0,0)):
         super().__init__()  # Initialize the Sprite parent class
         self.game = game
@@ -58,6 +59,12 @@ class Ghoul(pygame.sprite.Sprite):
         if self.health <= 0:
             self.kill()
 
+        # Update the current animation
+        self.current_animation.update(dt)
+        self.image = self.current_animation.get_current_frame()
+        if self.FACING_LEFT == True:
+            self.image = pygame.transform.flip(self.image,1,0)
+
     def limit_velocity(self, max_vel):
         min(-max_vel, max(self.velocity.x, max_vel))
         if abs(self.velocity.x) < .01: self.velocity.x = 0
@@ -89,6 +96,7 @@ class Ghoul(pygame.sprite.Sprite):
                 # Toggle between moving left and right after each pause
                 self.state = 'move_right' if self.previous_state == 'move_left' else 'move_left'
                 self.previous_state = self.state  # Update the previous state for tracking
+                self.current_animation = self.animations['walk']
 
         # Move left state
         elif self.state == 'move_left':
@@ -98,6 +106,7 @@ class Ghoul(pygame.sprite.Sprite):
                 self.MOVE_LEFT = False
                 self.last_move_time = current_time
                 self.state = 'pause'  # Switch to "pause" state
+                self.current_animation = self.animations['idle']
 
         # Move right state
         elif self.state == 'move_right':
@@ -107,3 +116,4 @@ class Ghoul(pygame.sprite.Sprite):
                 self.MOVE_RIGHT = False
                 self.last_move_time = current_time
                 self.state = 'pause'  # Switch to "pause" state
+                self.current_animation = self.animations['idle']
