@@ -216,6 +216,7 @@ class Player(pygame.sprite.Sprite):
         for painting in collisions:
             if not painting.collected:  # Check if it's already collected
                 painting.remove()  # Mark as collected
+                self.foundPainting = 1 # Update the player to having the map's painting
 
     def attack(self):
         current_time = pygame.time.get_ticks()
