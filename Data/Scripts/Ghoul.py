@@ -64,6 +64,7 @@ class Ghoul(pygame.sprite.Sprite):
         self.image = self.current_animation.get_current_frame()
         if self.FACING_LEFT == True:
             self.image = pygame.transform.flip(self.image,1,0)
+        self.update_image()
 
     def limit_velocity(self, max_vel):
         min(-max_vel, max(self.velocity.x, max_vel))
