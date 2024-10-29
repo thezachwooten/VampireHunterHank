@@ -16,6 +16,7 @@ TARGET_FPS = 60
 
 
 class Game:
+    # Game Constructor
     def __init__(self):
         pygame.init()
 
@@ -62,6 +63,11 @@ class Game:
         # skeleton
         self.skeleton = Skeleton.Skeleton(self,(100,100))
 
+    # method to check if game is over
+    def checkGameOver(self):
+        pass
+    
+    # Main Game method
     def run(self):
         # Main Game Loop
         while True:
