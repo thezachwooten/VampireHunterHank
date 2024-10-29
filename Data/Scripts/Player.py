@@ -37,6 +37,7 @@ class Player(pygame.sprite.Sprite):
         self.acceleration = pygame.math.Vector2(0, self.gravity)
 
         self.health = 100 # Initilize player health to 100
+        self.jumpCount = 0 # for double jump
 
         self.is_attacking = False
         self.attack_cooldown = 500  # cooldown in milliseconds
@@ -127,6 +128,7 @@ class Player(pygame.sprite.Sprite):
         for tile in collisions:
             if self.velocity.y > 0:  # Hit from the top (falling onto a tile)
                 self.on_ground = True
+                self.jumpCount = 0
                 self.is_jumping = False
                 self.velocity.y = 0  # Stop downward velocity
                 self.rect.bottom = tile.rect.top   # Align bottom of player with top of tile
@@ -204,10 +206,11 @@ class Player(pygame.sprite.Sprite):
     
 
     def jump(self):
-        if self.on_ground:
+        if self.on_ground or self.jumpCount < 2:
             self.is_jumping = True
             self.velocity.y -= 10
             self.on_ground = False
+            self.jumpCount += 1
 
     # method for dealing with painting collisions
     def paintHits(self, paintings):
