@@ -48,7 +48,7 @@ class Background:
             self.bg_images = []
 
             # Load background images and scale them [Forest]
-            for layer in range(6):
+            for layer in range(7):
                 image_path = os.path.join("Data", "Images", "Backgrounds", self.bgtype, f"{layer}.png")
                 image = pygame.image.load(image_path).convert_alpha()
 

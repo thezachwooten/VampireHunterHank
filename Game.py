@@ -30,7 +30,7 @@ class Game:
 
         
 
-        self.levels = ['Forest', 'Cemetery', 'Castle']
+        self.levels = ['Forest', 'Cemetary', 'Castle']
 
         self.curLevel = 0
 
@@ -41,7 +41,7 @@ class Game:
         self.map_width, self.map_height = self.tile_map.get_map_size()
 
         # Initialize the background
-        self.background = Background(self.levels[0], self.screen, SCREEN_WIDTH, SCREEN_HEIGHT)
+        self.background = Background(self.levels[2], self.screen, SCREEN_WIDTH, SCREEN_HEIGHT)
 
         
 
