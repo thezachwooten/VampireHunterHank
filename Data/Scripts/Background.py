@@ -10,6 +10,7 @@ class Background:
         self.scroll = 0
         self.bgtype = bgtype
 
+        # load Forest
         if self.bgtype == 'Forest':
             # Initialize the background image list
             self.bg_images = []
@@ -25,6 +26,39 @@ class Background:
 
             # Set the width of the background based on one of the images (assuming all have the same width)
             self.bg_width = self.bg_images[0].get_width()
+        # load Cemetary
+        elif self.bgtype == 'Cemetary':
+            # Initialize the background image list
+            self.bg_images = []
+
+            # Load background images and scale them [Forest]
+            for layer in ['back', 'middle', 'front']:
+                image_path = os.path.join("Data", "Images", "Backgrounds", self.bgtype, f"{layer}.png")
+                image = pygame.image.load(image_path).convert_alpha()
+
+                # Optionally scale the images to fit the screen dimensions
+                scaled_image = pygame.transform.scale(image, (self.screen_width, self.screen_height))
+                self.bg_images.append(scaled_image)
+
+            # Set the width of the background based on one of the images (assuming all have the same width)
+            self.bg_width = self.bg_images[0].get_width()
+        # load Castle
+        elif self.bgtype == 'Castle':
+            # Initialize the background image list
+            self.bg_images = []
+
+            # Load background images and scale them [Forest]
+            for layer in range(6):
+                image_path = os.path.join("Data", "Images", "Backgrounds", self.bgtype, f"{layer}.png")
+                image = pygame.image.load(image_path).convert_alpha()
+
+                # Optionally scale the images to fit the screen dimensions
+                scaled_image = pygame.transform.scale(image, (self.screen_width, self.screen_height))
+                self.bg_images.append(scaled_image)
+
+            # Set the width of the background based on one of the images (assuming all have the same width)
+            self.bg_width = self.bg_images[0].get_width()
+        
 
     def draw_bg(self):
         # Draws the parallax background layers 
