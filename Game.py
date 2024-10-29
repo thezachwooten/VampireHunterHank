@@ -6,6 +6,7 @@ from Data.Scripts.Background import * # import code for parallax effect
 from Data.Scripts.tiles import Tilemap # import tilemap code
 from Data.Scripts import Player # import player class
 from Data.Scripts import Ghoul # import ghoul class
+from Data.Scripts import Skeleton # import ghoul class
 from Data.Scripts import Camera # import camera class
 
 SCREEN_WIDTH = 640
@@ -58,6 +59,8 @@ class Game:
             start_x, start_y = ghoulspawn.rect.x, ghoulspawn.rect.y  # Access position
             ghoul = Ghoul.Ghoul(self, (start_x,start_y))
             self.ghouls.append(ghoul)
+        # skeleton
+        self.skeleton = Skeleton.Skeleton(self,(100,100))
 
     def run(self):
         # Main Game Loop
@@ -98,6 +101,10 @@ class Game:
                     ghoul.kill()  # Remove from groups
                 else:
                     ghoul.draw(self.screen, self.camera)  # Draw if alive
+            # Update Skeletons
+            self.skeleton.draw(self.screen, self.camera)
+            self.skeleton.update(self.dt)
+            # Update Camera
             self.camera.update(self.player, self.map_width, self.map_height)
             # Draw Map
             self.tile_map.draw(self.screen, self.camera, self.ground_tiles)
