@@ -11,9 +11,10 @@ class Ghoul(pygame.sprite.Sprite):
         self.animations = {}
 
         # Load spritesheets and create animations
-        self.animations['idle'] = Animations.Animations(utils.load_spritesheet('Enemies/Ghoul/Idle.png', 32, 32, 4), 60)  # 5 frames at 60 fps
-        self.animations['walk'] = Animations.Animations(utils.load_spritesheet('Enemies/Ghoul/Walk.png', 32, 32, 8), 60)  # 5 frames at 60 fps
-        self.animations['hit'] - Animations.Animations(utils.load_spritesheet('Enemies/Ghoul/Hit.png', 32, 32, 4), 60)  # 5 frames at 60 fps
+        self.animations['idle'] = Animations.Animations(utils.load_spritesheet('Enemies/Ghoul/Idle.png', 32, 32, 4), 60)  # 4 frames at 60 fps
+        self.animations['walk'] = Animations.Animations(utils.load_spritesheet('Enemies/Ghoul/Walk.png', 32, 32, 8), 60)  # 8 frames at 60 fps
+        self.animations['hit'] = Animations.Animations(utils.load_spritesheet('Enemies/Ghoul/Hit.png', 32, 32, 4), 60)  # 4 frames at 60 fps
+        self.animations['death'] = Animations.Animations(utils.load_spritesheet('Enemies/Ghoul/Death.png', 32, 32, 6), 60)  # 6 frames at 60 fps
 
         self.position, self.velocity = pygame.math.Vector2(position[0], position[1]), pygame.math.Vector2(0, 0)
         self.current_animation = self.animations['idle']  # Start with idle animation
@@ -35,6 +36,7 @@ class Ghoul(pygame.sprite.Sprite):
 
         self.health = 100 # Initilize ghoul health to 100
         self.isDead = False
+        self.is_dying = False
 
     def draw(self, surf, camera):
         # Draw the ghoul image using the camera offset
@@ -58,8 +60,23 @@ class Ghoul(pygame.sprite.Sprite):
         self.move_ai()
         # check if health reaches zero
         if self.health <= 0:
-            self.kill()
-
+            # Set current animation to death
+            self.current_animation = self.animations['death']
+            # Get current time and animation length
+            self.death_start_time = pygame.time.get_ticks()
+            self.animation_length = self.current_animation.get_duration()
+    
+            # Update a flag to indicate that the sprite is in the "dying" state
+            self.is_dying = True
+        
+        # In your update method
+        if self.is_dying:
+            # Calculate elapsed time since the death animation started
+            elapsed_time = pygame.time.get_ticks() - self.death_start_time
+            # Check if the elapsed time exceeds the animation length
+            if elapsed_time >= self.animation_length:
+                # Delete the sprite after the animation completes
+                self.kill()
         # Update the current animation
         self.current_animation.update(dt)
         self.image = self.current_animation.get_current_frame()

@@ -122,7 +122,7 @@ class Game:
             for ghoul in self.ghouls[:]:  # Iterate over a copy of the list
                 ghoul.update(self.dt)
                 if ghoul.health <= 0:  # Check if the ghoul is dead
-                    ghoul.kill()  # Remove from groups
+                    ghoul.is_dying = True # set ghould to dying 
                 else:
                     ghoul.draw(self.screen, self.camera)  # Draw if alive
             # Update Skeletons
