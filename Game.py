@@ -10,6 +10,7 @@ from Data.Scripts import Player # import player class
 from Data.Scripts import Ghoul # import ghoul class
 from Data.Scripts import Skeleton # import ghoul class
 from Data.Scripts import Camera # import camera class
+from Data.Scripts import Projectile # import projectile class
 
 SCREEN_WIDTH = 640
 SCREEN_HEIGHT = 480
@@ -41,6 +42,9 @@ class Game:
 
         # initialize level
         self.load_level() # this defaults to 'Forest' as curLevel is initialized to 0
+
+        # initialize projectiles
+        self.projectiles = pygame.sprite.Group()
 
     # method to load level data based on curLevel parameter
     def load_level(self):
