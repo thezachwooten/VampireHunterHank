@@ -237,11 +237,11 @@ class Player(pygame.sprite.Sprite):
                 if pygame.sprite.collide_mask(self, enemy):
                     if self.FACING_LEFT:
                         if self.rect.left - enemy.rect.right < 20:  # Check distance to the enemy
-                            enemy.health -= 10  # Damage dealt
+                            enemy.health = 0  # Damage dealt
                             print("Enemy hit! Health:", enemy.health)
                     else:
                         if enemy.rect.left - self.rect.right < 20:
-                            enemy.health -= 10
+                            enemy.health = 0
                             print("Enemy hit! Health:", enemy.health)
 
                     # Check if enemy health is now zero or below

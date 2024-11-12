@@ -1,6 +1,8 @@
 import pygame
 import sys
 
+from enum import Enum # import Enums
+
 from Data.Scripts.utils import * # import util scripts
 from Data.Scripts.Background import * # import code for parallax effect
 from Data.Scripts.tiles import Tilemap # import tilemap code
@@ -13,7 +15,10 @@ SCREEN_WIDTH = 640
 SCREEN_HEIGHT = 480
 TARGET_FPS = 60
 
-
+class GameState(Enum):
+    PLAYING = 1
+    GAME_OVER = 2
+    NEXT_LEVEL = 3
 
 class Game:
     # Game Constructor
@@ -28,12 +33,17 @@ class Game:
 
         self.movement = [False, False]
 
-        
+        self.state = GameState.PLAYING # Start in playing mode
 
         self.levels = ['Forest', 'Cemetary', 'Castle']
 
         self.curLevel = 0 # 0-2; 3 total level choices
 
+        # initialize level
+        self.load_level() # this defaults to 'Forest' as curLevel is initialized to 0
+
+    # method to load level data based on curLevel parameter
+    def load_level(self):
         self.tile_map = Tilemap("Data/Images/Tilesets/" + self.levels[self.curLevel] + "/NewTest.tmx") # test file 
 
         # initialize camera
@@ -67,6 +77,8 @@ class Game:
             start_x, start_y = skeletonSpawn.rect.x, skeletonSpawn.rect.y # Access position
             skeleton = Skeleton.Skeleton(self, (start_x,start_y))
             self.skeletons.append(skeleton)
+
+    
 
     # method to check if game is over
     def checkGameOver(self):
@@ -113,10 +125,7 @@ class Game:
             # Draw the background and ground
             self.background.draw_bg()
 
-            # Check if player is dead
-            if self.player.health <= 0:
-                self.player.kill() # kill player sprite; removes player sprite from groups
-                # end game state
+            self.checkGameOver()
 
             # Handle player movement
             # Draw tilemap and player with camera offset
