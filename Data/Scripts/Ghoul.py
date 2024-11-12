@@ -13,6 +13,7 @@ class Ghoul(pygame.sprite.Sprite):
         # Load spritesheets and create animations
         self.animations['idle'] = Animations.Animations(utils.load_spritesheet('Enemies/Ghoul/Idle.png', 32, 32, 4), 60)  # 5 frames at 60 fps
         self.animations['walk'] = Animations.Animations(utils.load_spritesheet('Enemies/Ghoul/Walk.png', 32, 32, 8), 60)  # 5 frames at 60 fps
+        self.animations['hit'] - Animations.Animations(utils.load_spritesheet('Enemies/Ghoul/Hit.png', 32, 32, 4), 60)  # 5 frames at 60 fps
 
         self.position, self.velocity = pygame.math.Vector2(position[0], position[1]), pygame.math.Vector2(0, 0)
         self.current_animation = self.animations['idle']  # Start with idle animation
