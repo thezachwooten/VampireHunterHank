@@ -1,5 +1,4 @@
 import pygame
-from pygame.sprite import _Group
 
 SCREEN_WIDTH = 640
 SCREEN_HEIGHT = 480
