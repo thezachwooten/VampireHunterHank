@@ -113,8 +113,12 @@ class Game:
             # Draw the background and ground
             self.background.draw_bg()
 
+            # Check if player is dead
+            if self.player.health <= 0:
+                self.player.kill() # kill player sprite; removes player sprite from groups
+                # end game state
+
             # Handle player movement
-            # tile_rects = self.tile_map.get_tile_rects()  # Get tile rectangles for tiles that have collision
             # Draw tilemap and player with camera offset
             self.player.update(self.dt, self.ground_tiles, self.painting_tiles, self.ghouls)
             self.player.draw(self.screen, self.camera)
