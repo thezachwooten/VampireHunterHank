@@ -114,13 +114,6 @@ class Game:
                         self.state = GameState.PLAYING # changes game state
                         self.load_level() # reload level 
 
-            # Scroll control based on player input
-            key = pygame.key.get_pressed()
-            if key[pygame.K_LEFT]:
-                self.background.update_scroll('left')
-            if key[pygame.K_RIGHT]:
-                self.background.update_scroll('right')
-
             # Game State Logic
             if self.state == GameState.PLAYING: # Game is being played
                 # update game and check game over
@@ -137,6 +130,13 @@ class Game:
     def update_gameplay(self):
         # Handle player input inside the Player class
         self.player.handle_input()
+
+        # Scroll control based on player input
+        key = pygame.key.get_pressed()
+        if key[pygame.K_LEFT]:
+            self.background.update_scroll('left')
+        if key[pygame.K_RIGHT]:
+            self.background.update_scroll('right')
 
         # Draw the background and ground
         self.background.draw_bg()
