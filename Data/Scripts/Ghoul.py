@@ -36,8 +36,14 @@ class Ghoul(pygame.sprite.Sprite):
         self.acceleration = pygame.math.Vector2(0, self.gravity)
 
         self.health = 100 # Initilize ghoul health to 100
-        self.isDead = False
-        self.is_dying = False
+        self.isDead = False # Ghoul is not dead
+        self.is_dying = False # Ghoul is not dying 
+
+        self.is_attacking = False # Ghoul is not attacking  
+        self.attack_cooldown = 500  # cooldown in milliseconds
+        self.last_attack_time = 0 # 0 since last attack
+
+        self.player_detected = False # player is not detected
 
     def draw(self, surf, camera):
         # Draw the ghoul image using the camera offset
@@ -137,3 +143,34 @@ class Ghoul(pygame.sprite.Sprite):
                 self.last_move_time = current_time
                 self.state = 'pause'  # Switch to "pause" state
                 self.current_animation = self.animations['idle']
+
+    def attack(self):
+        current_time = pygame.time.get_ticks()
+        if not self.is_attacking and current_time - self.last_attack_time >= self.attack_cooldown:
+            self.is_attacking = True
+            self.last_attack_time = current_time
+            self.current_animation = self.animations['attack']
+            self.update_image()
+            # Do not reset here; let the update method handle the animation progression
+
+    # method for checking attack hits
+    def check_attack_hits(self, player):
+        if player.health > 0:  # Only check if the player is alive
+                if pygame.sprite.collide_mask(self, player):
+                    if self.FACING_LEFT:
+                        if self.rect.left - player.rect.right < 20:  # Check distance to the player
+                            player.health -= 10  # Damage dealt
+                            print("Player hit! Health:", player.health)
+                    else:
+                        if player.rect.left - self.rect.right < 20:
+                            player.health -= 10
+                            print("player hit! Health:", player.health)
+
+                    # Check if enemy health is now zero or below
+                    if player.health <= 0:
+                        print("player has died!")
+                        player.kill() # kill player sprite
+    
+    # method for detecting player
+    def detect_player(self, player):
+        pass
