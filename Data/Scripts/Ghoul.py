@@ -62,9 +62,10 @@ class Ghoul(pygame.sprite.Sprite):
         self.rect.center = self.position
 
 
-    def update(self, dt):
+    def update(self, dt, player):
         self.horizontal_movement(dt)
-        self.move_ai()
+        # check if player is deteced
+        self.move_ai() # move
         # check if health reaches zero
         if self.health <= 0:
             # Set current animation to death
@@ -84,6 +85,7 @@ class Ghoul(pygame.sprite.Sprite):
             if elapsed_time >= self.animation_length:
                 # Delete the sprite after the animation completes
                 self.kill()
+            return 
         # Update the current animation
         self.current_animation.update(dt)
         self.image = self.current_animation.get_current_frame()
@@ -171,20 +173,4 @@ class Ghoul(pygame.sprite.Sprite):
                         print("player has died!")
                         player.kill() # kill player sprite
     
-    # method for detecting player
-    def detect_player(self, player, xDist):
-        # get player pos -> (x,y)
-        player_x = player.rect.x
-        player_y = player.rect.y
-        # make sure player is on same level as self
-        if player_y == self.rect.y:
-            # Check if player is within xDist on the left or right of the entity
-            # Left side check
-            if self.rect.x - xDist <= player_x < self.rect.x:
-                return True
-            # Right side check
-            elif self.rect.x + self.rect.width < player_x <= self.rect.x + self.rect.width + xDist:
-                return True
-
-        # Return False if player is not on the same level or within the distance
-        return False
+    
