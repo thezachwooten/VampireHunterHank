@@ -170,7 +170,7 @@ class Game:
     def display_game_over(self):
         # displays game over screen
         self.screen.fill((0,0,0))
-        font = pygame.font.Font(None, 74)
+        font = pygame.font.Font("./Data/Fonts/gothic.ttf", 74)
         text = font.render("Game Over", True, (255, 0 , 0))
         text_rect = text.get_rect(center=(SCREEN_HEIGHT // 2, SCREEN_HEIGHT // 2))
         self.screen.blit(text, text_rect)
