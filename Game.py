@@ -32,7 +32,7 @@ class Game:
 
         self.levels = ['Forest', 'Cemetary', 'Castle']
 
-        self.curLevel = 0
+        self.curLevel = 0 # 0-2; 3 total level choices
 
         self.tile_map = Tilemap("Data/Images/Tilesets/" + self.levels[self.curLevel] + "/NewTest.tmx") # test file 
 
