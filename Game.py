@@ -109,7 +109,7 @@ class Game:
                     pygame.quit()
                     sys.exit()
                 elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_RETURN and self.state == GameState.GAME_OVER: # escape-key pressed during GAME_OVER
+                    if event.key == pygame.K_RETURN and self.state == GameState.GAME_OVER: # Return-key pressed during GAME_OVER
                         # Restart the game on curLevel
                         self.state = GameState.PLAYING # changes game state
                         self.load_level() # reload level 
