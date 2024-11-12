@@ -83,19 +83,17 @@ class Game:
     # method to check if game is over
     def checkGameOver(self):
         if self.player.health <= 0:
-            print("Game Over")
+            # Change game state to GAME_OVER
+            self.state = GameState.GAME_OVER
     # method to switch to next level
     def nextLevel(self):
-        # check if on last level
-        if self.curLevel == len(self.levels):
-            print("On last level")
-        else:
-            # increment level
+        # Switch to next level or print gameover if final level reached
+        if self.curLevel < len(self.levels) - 1:
             self.curLevel += 1
-            # reset background to curLevel
-            self.background = Background(self.levels[0], self.screen, SCREEN_WIDTH, SCREEN_HEIGHT)
-            # change map
-            self.tile_map = Tilemap("Data/Images/Tilesets/" + self.levels[self.curLevel] + "/NewTest.tmx") # test file 
+            self.load_level()
+        else:
+            print("Congratulations! You've completed all levels. Maybe I'll add a fancy screen for this")
+            self.state = GameState.GAME_OVER
     
     # Main Game method
     def run(self):
@@ -110,9 +108,6 @@ class Game:
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
-                
-            # Handle player input inside the Player class
-            self.player.handle_input()
 
             # Scroll control based on player input
             key = pygame.key.get_pressed()
@@ -121,37 +116,59 @@ class Game:
             if key[pygame.K_RIGHT]:
                 self.background.update_scroll('right')
 
-
-            # Draw the background and ground
-            self.background.draw_bg()
-
-            self.checkGameOver()
-
-            # Handle player movement
-            # Draw tilemap and player with camera offset
-            self.player.update(self.dt, self.ground_tiles, self.painting_tiles, self.ghouls)
-            self.player.draw(self.screen, self.camera)
-            # Update ghouls
-            for ghoul in self.ghouls[:]:  # Iterate over a copy of the list
-                ghoul.update(self.dt, self.player)
-                if ghoul.health <= 0:  # Check if the ghoul is dead
-                    ghoul.is_dying = True # set ghould to dying 
-                else:
-                    ghoul.draw(self.screen, self.camera)  # Draw if alive
-            # Update Skeletons
-            for skeleton in self.skeletons[:]:
-                self.skeleton.update(self.dt)
-                if skeleton.health <= 0:
-                    skeleton.kill()
-                else:
-                    self.skeleton.draw(self.screen, self.camera)
-            # Update Camera
-            self.camera.update(self.player, self.map_width, self.map_height)
-            # Draw Map
-            self.tile_map.draw(self.screen, self.camera, self.ground_tiles)
-            self.tile_map.draw(self.screen, self.camera, self.painting_tiles)
+            # Game State Logic
+            if self.state == GameState.PLAYING: # Game is being played
+                # update game and check game over
+                self.checkGameOver()
+                self.update_gameplay()
+            elif self.state == GameState.GAME_OVER: # Game is over
+                # draw game over
+                self.display_game_over()
+            
 
             pygame.display.update()
             self.clock.tick(60)
+
+    def update_gameplay(self):
+        # Handle player input inside the Player class
+        self.player.handle_input()
+
+        # Draw the background and ground
+        self.background.draw_bg()
+
+        self.checkGameOver()
+
+        # Handle player movement
+        # Draw tilemap and player with camera offset
+        self.player.update(self.dt, self.ground_tiles, self.painting_tiles, self.ghouls)
+        self.player.draw(self.screen, self.camera)
+        # Update ghouls
+        for ghoul in self.ghouls[:]:  # Iterate over a copy of the list
+            ghoul.update(self.dt, self.player)
+            if ghoul.health <= 0:  # Check if the ghoul is dead
+                ghoul.is_dying = True # set ghould to dying 
+            else:
+                ghoul.draw(self.screen, self.camera)  # Draw if alive
+        # Update Skeletons
+        for skeleton in self.skeletons[:]:
+            self.skeleton.update(self.dt)
+            if skeleton.health <= 0:
+                skeleton.kill()
+            else:
+                self.skeleton.draw(self.screen, self.camera)
+        # Update Camera
+        self.camera.update(self.player, self.map_width, self.map_height)
+        # Draw Map
+        self.tile_map.draw(self.screen, self.camera, self.ground_tiles)
+        self.tile_map.draw(self.screen, self.camera, self.painting_tiles)
+
+    def display_game_over(self):
+        # displays game over screen
+        self.screen.fill((0,0,0))
+        font = pygame.font.Font(None, 74)
+        text = font.render("Game Over", True, (255, 0 , 0))
+        text_rect = text.get_rect(center=(SCREEN_HEIGHT // 2, SCREEN_HEIGHT // 2))
+        self.screen.blit(text, text_rect)
+        pygame.display.flip()
 
 Game().run()
