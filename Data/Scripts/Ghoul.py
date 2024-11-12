@@ -13,9 +13,9 @@ class Ghoul(pygame.sprite.Sprite):
         # Load spritesheets and create animations
         self.animations['idle'] = Animations.Animations(utils.load_spritesheet('Enemies/Ghoul/Idle.png', 32, 32, 4), 60)  # 4 frames at 60 fps
         self.animations['walk'] = Animations.Animations(utils.load_spritesheet('Enemies/Ghoul/Walk.png', 32, 32, 8), 60)  # 8 frames at 60 fps
-        self.animations['hit'] = Animations.Animations(utils.load_spritesheet('Enemies/Ghoul/Hit.png', 32, 32, 4), 60)  # 4 frames at 60 fps
-        self.animations['death'] = Animations.Animations(utils.load_spritesheet('Enemies/Ghoul/Death.png', 32, 32, 6), 60)  # 6 frames at 60 fps
-        self.animations['attack'] = Animations.Animations(utils.load_spritesheet('Enemies/Ghoul/Attack.png', 32, 32, 6), 60)  # 6 frames at 60 fps
+        self.animations['hit'] = Animations.Animations(utils.load_spritesheet('Enemies/Ghoul/Hit.png', 32, 32, 4), 60, False)  # 4 frames at 60 fps
+        self.animations['death'] = Animations.Animations(utils.load_spritesheet('Enemies/Ghoul/Death.png', 32, 32, 6), 60, False)  # 6 frames at 60 fps
+        self.animations['attack'] = Animations.Animations(utils.load_spritesheet('Enemies/Ghoul/Attack.png', 32, 32, 6), 60, False)  # 6 frames at 60 fps
 
         self.position, self.velocity = pygame.math.Vector2(position[0], position[1]), pygame.math.Vector2(0, 0)
         self.current_animation = self.animations['idle']  # Start with idle animation
@@ -172,5 +172,19 @@ class Ghoul(pygame.sprite.Sprite):
                         player.kill() # kill player sprite
     
     # method for detecting player
-    def detect_player(self, player):
-        pass
+    def detect_player(self, player, xDist):
+        # get player pos -> (x,y)
+        player_x = player.rect.x
+        player_y = player.rect.y
+        # make sure player is on same level as self
+        if player_y == self.rect.y:
+            # Check if player is within xDist on the left or right of the entity
+            # Left side check
+            if self.rect.x - xDist <= player_x < self.rect.x:
+                return True
+            # Right side check
+            elif self.rect.x + self.rect.width < player_x <= self.rect.x + self.rect.width + xDist:
+                return True
+
+        # Return False if player is not on the same level or within the distance
+        return False
