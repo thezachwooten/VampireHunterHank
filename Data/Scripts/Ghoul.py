@@ -66,6 +66,7 @@ class Ghoul(pygame.sprite.Sprite):
         self.horizontal_movement(dt)
         # check if player is deteced
         self.move_ai() # move
+        self.check_attack(player) # check if player can be attacked and attack if so
         # check if health reaches zero
         if self.health <= 0:
             # Set current animation to death
@@ -173,4 +174,26 @@ class Ghoul(pygame.sprite.Sprite):
                         print("player has died!")
                         player.kill() # kill player sprite
     
-    
+    def check_attack(self, player):
+        """Check for collision and initiate attack if possible."""
+        current_time = pygame.time.get_ticks()
+        
+        # Check if within attack cooldown
+        if self.is_attacking and current_time - self.last_attack_time < self.attack_cooldown:
+            return
+        
+        # Collision-based attack initiation
+        if pygame.sprite.collide_mask(self, player):  # Use mask for pixel-perfect collision
+            self.is_attacking = True
+            self.last_attack_time = current_time
+            self.current_animation = self.animations['attack']
+            player.health -= 10  # Deal damage to the player
+            print(f"Player hit! Health: {player.health}")
+        
+            # Check if the player's health reaches zero
+            if player.health <= 0:
+                player.kill()
+                print("Player has died!")
+        else:
+            # Reset attacking state if not colliding
+            self.is_attacking = False
