@@ -192,7 +192,6 @@ class Ghoul(pygame.sprite.Sprite):
         
             # Check if the player's health reaches zero
             if player.health <= 0:
-                player.kill()
                 print("Player has died!")
         else:
             # Reset attacking state if not colliding
