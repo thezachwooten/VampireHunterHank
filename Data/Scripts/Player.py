@@ -61,6 +61,9 @@ class Player(pygame.sprite.Sprite):
         # Draw the player image using the camera offset 
         surf.blit(self.image, camera.apply(self.offsetRect))
         pygame.draw.rect(surf, (255, 0, 0), camera.apply(self.rect), 2)  # Debug: rect around player image
+        # draw healthbar
+        # Health bar
+        self.draw_health_bar(surf)
 
 
     def update(self, dt, ground_tile, paintings, enemies, portals):
@@ -232,21 +235,39 @@ class Player(pygame.sprite.Sprite):
             self.update_image()
             # Do not reset here; let the update method handle the animation progression
     
-    # method for checking attack hits
+    
+    # Method for checking attack hits within a range in front of the player
     def check_attack_hits(self, enemies):
+        attack_damage = 20  # Define the amount of damage per attack
+        attack_range = 35   # Define the range of the attack in pixels
+        
+        # Determine the attack area based on the player's facing direction
+        if self.FACING_LEFT:
+            # Create an attack rect extending to the left of the player
+            attack_rect = pygame.Rect(
+                self.rect.left - attack_range,  # Start slightly to the left of the player
+                self.rect.top,                   # Keep the same vertical position
+                attack_range,                    # Width of the attack range
+                self.rect.height                 # Same height as the player
+            )
+        else:
+            # Create an attack rect extending to the right of the player
+            attack_rect = pygame.Rect(
+                self.rect.right,                 # Start at the player's right edge
+                self.rect.top,                   # Keep the same vertical position
+                attack_range,                    # Width of the attack range
+                self.rect.height                 # Same height as the player
+        )
+    
+        # Iterate over enemies to see if any are within the attack range
         for enemy in enemies[:]:  # Iterate over a copy of the list
             if enemy.health > 0:  # Only check if the enemy is alive
-                if pygame.sprite.collide_mask(self, enemy):
-                    if self.FACING_LEFT:
-                        if self.rect.left - enemy.rect.right < 20:  # Check distance to the enemy
-                            enemy.health = 0  # Damage dealt
-                            print("Enemy hit! Health:", enemy.health)
-                    else:
-                        if enemy.rect.left - self.rect.right < 20:
-                            enemy.health = 0
-                            print("Enemy hit! Health:", enemy.health)
+                if attack_rect.colliderect(enemy.rect):  # Check if enemy is in the attack range
+                    # Apply damage to the enemy
+                    enemy.health = max(0, enemy.health - attack_damage)
+                    print(f"Enemy hit! Health: {enemy.health}")
 
-                    # Check if enemy health is now zero or below
+                    # Check if the enemy’s health has dropped to zero
                     if enemy.health <= 0:
                         print("Enemy has died!")
                         enemies.remove(enemy)  # Remove dead enemy from the list
@@ -261,3 +282,21 @@ class Player(pygame.sprite.Sprite):
                 print("MOVING TO NEXT LEVEL")
             else:
                 print("NEED TO FIND MAP PIECE")
+
+    # method to draw health bar
+    def draw_health_bar(self, surface):
+        bar_width = 125  # Width of the health bar
+        bar_height = 25   # Height of the health bar
+        health_ratio = self.health / self.max_health  # Ratio of current to max health
+        
+        # Calculate foreground (current health) bar width
+        current_bar_width = int(bar_width * health_ratio)
+        
+        # Position the health bar in corner of screen
+        bar_x = 15
+        bar_y = 10
+        # Draw the background (max health) bar
+        pygame.draw.rect(surface, (255, 0, 0), (bar_x, bar_y, bar_width, bar_height))
+        
+        # Draw the foreground (current health) bar
+        pygame.draw.rect(surface, (0, 255, 0), (bar_x, bar_y, current_bar_width, bar_height))
