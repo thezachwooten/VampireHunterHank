@@ -37,6 +37,7 @@ class Player(pygame.sprite.Sprite):
         self.acceleration = pygame.math.Vector2(0, self.gravity)
 
         self.health = 100 # Initilize player health to 100
+        self.max_health = 100 # Maximum health for player
         self.jumpCount = 0 # for double jump
 
         self.is_attacking = False
