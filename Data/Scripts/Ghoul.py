@@ -187,7 +187,8 @@ class Ghoul(pygame.sprite.Sprite):
             self.is_attacking = True
             self.last_attack_time = current_time
             self.current_animation = self.animations['attack']
-            player.health -= 10  # Deal damage to the player
+            player.health -= 20  # Deal damage to the player
+            player.velocity.x += 10
             print(f"Player hit! Health: {player.health}")
         
             # Check if the player's health reaches zero

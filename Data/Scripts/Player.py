@@ -63,7 +63,7 @@ class Player(pygame.sprite.Sprite):
         pygame.draw.rect(surf, (255, 0, 0), camera.apply(self.rect), 2)  # Debug: rect around player image
 
 
-    def update(self, dt, ground_tile, paintings, enemies):
+    def update(self, dt, ground_tile, paintings, enemies, portals):
         # Move
         self.handle_input()
         self.horizontal_movement(dt)
@@ -80,7 +80,8 @@ class Player(pygame.sprite.Sprite):
 
         # painting collision
         self.paintHits(paintings)
-        
+        # Portal Collisions
+        self.portal_hits(portals)
         
         # Update the current animation
         self.current_animation.update(dt)
@@ -249,3 +250,14 @@ class Player(pygame.sprite.Sprite):
                     if enemy.health <= 0:
                         print("Enemy has died!")
                         enemies.remove(enemy)  # Remove dead enemy from the list
+    
+    # method for dealing with portal interaction
+    def portal_hits(self, portals):
+        collisions = self.get_hits(portals) # get portals currently colliding with
+
+        for portal in collisions:
+            # check if player has map piece
+            if self.foundPainting == 1:
+                print("MOVING TO NEXT LEVEL")
+            else:
+                print("NEED TO FIND MAP PIECE")
