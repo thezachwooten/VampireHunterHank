@@ -22,6 +22,7 @@ class Player(pygame.sprite.Sprite):
         self.image = self.current_animation.get_current_frame()
         self.rect = self.image.get_rect(center = position)
         self.offsetRect = self.rect.copy() # offset rect
+
         
         
         # Create the mask and bounding rect based on the current image
@@ -46,6 +47,12 @@ class Player(pygame.sprite.Sprite):
 
         # level related events
         self.foundPainting = 0 # default to not having map painting
+
+        # healh overlay
+        self.health_overlay = utils.load_image("Misc/health_overlay.png")
+        self.health_overlay_rect = self.health_overlay.get_rect()
+        # resize overlay
+        self.health_overlay = pygame.transform.scale(self.health_overlay, (125, 50))
 
     def draw(self, surf, camera):
         # Fix offsets facing left
@@ -239,7 +246,7 @@ class Player(pygame.sprite.Sprite):
     # Method for checking attack hits within a range in front of the player
     def check_attack_hits(self, enemies):
         attack_damage = 20  # Define the amount of damage per attack
-        attack_range = 35   # Define the range of the attack in pixels
+        attack_range = 30   # Define the range of the attack in pixels
         
         # Determine the attack area based on the player's facing direction
         if self.FACING_LEFT:
@@ -283,20 +290,27 @@ class Player(pygame.sprite.Sprite):
             else:
                 print("NEED TO FIND MAP PIECE")
 
-    # method to draw health bar
+   # Method to draw health bar with heart overlay
     def draw_health_bar(self, surface):
-        bar_width = 125  # Width of the health bar
-        bar_height = 25   # Height of the health bar
+        bar_width = 92  # Total width of the health bar
+        bar_height = 8  # Height of the health bar
         health_ratio = self.health / self.max_health  # Ratio of current to max health
         
-        # Calculate foreground (current health) bar width
+        # Calculate the width of the current health portion
         current_bar_width = int(bar_width * health_ratio)
         
-        # Position the health bar in corner of screen
-        bar_x = 15
-        bar_y = 10
-        # Draw the background (max health) bar
+        # Set the position of the health bar in the top-left corner of the screen
+        bar_x = 25  # Offset the health bar to the right of the heart overlay
+        bar_y = 20
+
+        # Position the overlay image
+        self.health_overlay_rect.topleft = (5, 0)  # Position the heart at a fixed position
+
+        # Draw the background bar (max health) in red
         pygame.draw.rect(surface, (255, 0, 0), (bar_x, bar_y, bar_width, bar_height))
         
-        # Draw the foreground (current health) bar
+        # Draw the foreground bar (current health) in green
         pygame.draw.rect(surface, (0, 255, 0), (bar_x, bar_y, current_bar_width, bar_height))
+
+        # Draw the heart overlay image to the left of the health bar
+        surface.blit(self.health_overlay, self.health_overlay_rect)
