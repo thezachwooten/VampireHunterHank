@@ -173,7 +173,7 @@ class Player(pygame.sprite.Sprite):
         self.velocity.x += self.acceleration.x * dt # Physics eq
         self.limit_velocity(4) # limit the velocity
         self.position.x += self.velocity.x * dt + (self.acceleration.x * 0.5) * (dt * dt) # update the position
-        self.rect.x = self.position.x # update the player image by the position
+        self.rect.x = self.position.x # u pdate the player image by the position
 
         
     def vertical_movement(self, dt):
