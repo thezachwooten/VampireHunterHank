@@ -19,3 +19,16 @@ def load_spritesheet(path, frame_width, frame_height, num_frames):
         frames.append(frame)
 
     return frames
+
+# Helps load multiple separate images into frames
+def load_separate_frames_from_img(path, num_imgs):
+    # create frames
+    frames = []
+    # loop through num_imgs (starting with 0)
+    for i in range(0,num_imgs):
+        # load current image based on i
+        cur_img = load_image(path + str(i))
+        # append to frames list
+        frames.append(cur_img)
+    # return populated frames list
+    return frames
