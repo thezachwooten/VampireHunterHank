@@ -11,6 +11,16 @@
    <property name="player" type="bool" value="true"/>
   </properties>
  </tile>
+ <tile id="23">
+  <properties>
+   <property name="skeleton" type="bool" value="true"/>
+  </properties>
+ </tile>
+ <tile id="24">
+  <properties>
+   <property name="vampire" type="bool" value="true"/>
+  </properties>
+ </tile>
  <tile id="63">
   <properties>
    <property name="collision" type="bool" value="true"/>
