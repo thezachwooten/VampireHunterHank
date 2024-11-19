@@ -342,7 +342,7 @@ class Player(pygame.sprite.Sprite):
             # create a new fireball
             fireball = Projectile.Projectile(
                 image= None,
-                pos= (self.position[0] + self.rect.width, self.position[1] - self.rect.height /2),
+                pos= (self.offsetRect.centerx + 35, self.offsetRect.centery + 30),
                 vel=(-5 if self.FACING_LEFT else 5, 0),  # Direction based on facing
                 animated = True,
                 anims = Animations.Animations(utils.load_separate_frames_from_img("Projectiles/Fireball", 5), 60) # give fireball animations 
