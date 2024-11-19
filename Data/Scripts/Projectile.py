@@ -31,7 +31,7 @@ class Projectile(pygame.sprite.Sprite):
         self.FACING_LEFT = False
         self.FACING_RIGHT = False
 
-        # alive 
+        # alive variable
         self.is_alive = True
 
     def update(self, dt, enemies, ground_tiles):
