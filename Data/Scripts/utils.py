@@ -27,7 +27,7 @@ def load_separate_frames_from_img(path, num_imgs):
     # loop through num_imgs (starting with 0)
     for i in range(0,num_imgs):
         # load current image based on i
-        cur_img = load_image(path + str(i))
+        cur_img = load_image(path + '/' + str(i) + ".png")
         # append to frames list
         frames.append(cur_img)
     # return populated frames list

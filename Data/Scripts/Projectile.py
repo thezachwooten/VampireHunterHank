@@ -18,7 +18,7 @@ class Projectile(pygame.sprite.Sprite):
             # create animations dict
             self.animations = anims
             # default animation for projectiles should be named move
-            self.current_animation = self.animations['move']
+            self.current_animation = self.animations
             # get the current image from current frame
             self.image = self.current_animation.get_current_frame()
             # get rect for image

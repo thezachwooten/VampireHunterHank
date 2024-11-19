@@ -1,6 +1,7 @@
 import pygame
 from Data.Scripts import utils
 from Data.Scripts import Animations
+from Data.Scripts import Projectile # import Projectile class
 
 
 class Player(pygame.sprite.Sprite):
@@ -54,6 +55,10 @@ class Player(pygame.sprite.Sprite):
         # resize overlay
         self.health_overlay = pygame.transform.scale(self.health_overlay, (125, 50))
 
+        # current projectiles
+        self.projectiles = []
+        self.fireball = Animations.Animations(utils.load_separate_frames_from_img("Projectiles/Fireball", 5), 60) # 5 Frames at 60 FPS
+
     def draw(self, surf, camera):
         # Fix offsets facing left
         if self.FACING_LEFT:
@@ -87,6 +92,10 @@ class Player(pygame.sprite.Sprite):
         if self.is_attacking and self.current_animation.is_finished:
             self.is_attacking = False
             self.current_animation.reset()  # Reset animation for next attack
+
+        # Projectile stuff
+        for projectile in self.projectiles:
+            projectile.update(dt) # update
 
         # painting collision
         self.paintHits(paintings)
@@ -215,6 +224,10 @@ class Player(pygame.sprite.Sprite):
         # Start attack if Z key is pressed and not currently attacking
         if keys[pygame.K_z]:
             self.attack()
+        # Fireball
+        if keys[pygame.K_x]:
+            # shoot fireball
+            self.fire_fireball()
     
 
     def jump(self):
@@ -290,7 +303,7 @@ class Player(pygame.sprite.Sprite):
             else:
                 print("NEED TO FIND MAP PIECE")
 
-   # Method to draw health bar with heart overlay
+    # Method to draw health bar with heart overlay
     def draw_health_bar(self, surface):
         bar_width = 92  # Total width of the health bar
         bar_height = 8  # Height of the health bar
@@ -314,3 +327,18 @@ class Player(pygame.sprite.Sprite):
 
         # Draw the heart overlay image to the left of the health bar
         surface.blit(self.health_overlay, self.health_overlay_rect)
+    
+    # Method for shooting fireballs
+    def fire_fireball(self):
+        # make sure player is not attacking
+        if not self.is_attacking:
+            # create a new fireball
+            fireball = Projectile.Projectile(
+                image= None,
+                pos=self.rect.center,
+                vel=(-5 if self.FACING_LEFT else 5, 0),  # Direction based on facing
+                animated = True,
+                anims = self.fireball # give fireball animations 
+
+            )
+            self.projectiles.append(fireball)
