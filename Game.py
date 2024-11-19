@@ -15,6 +15,7 @@ from Data.Scripts import Projectile # import projectile class
 SCREEN_WIDTH = 640
 SCREEN_HEIGHT = 480
 TARGET_FPS = 60
+MUSIC_PATH = "./Data/Music/" # path for music
 
 class GameState(Enum):
     PLAYING = 1
@@ -24,7 +25,8 @@ class GameState(Enum):
 class Game:
     # Game Constructor
     def __init__(self):
-        pygame.init()
+        pygame.init() # Initialize pygame
+        pygame.mixer.init() # Initialize audio mixer
 
         pygame.display.set_caption('Vampire Hunter Hank')
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -48,7 +50,14 @@ class Game:
 
     # method to load level data based on curLevel parameter
     def load_level(self):
-        self.tile_map = Tilemap("Data/Images/Tilesets/" + self.levels[self.curLevel] + "/NewTest.tmx") # test file 
+        # Load tile map for current level
+        self.tile_map = Tilemap("./Data/Images/Tilesets/" + self.levels[self.curLevel] + "/NewTest.tmx") # test file 
+
+        # Load background music for current level
+        self.cur_track = MUSIC_PATH + self.levels[self.curLevel] + ".ogg" # ./Data/Music/{curLevel}.ogg
+        pygame.mixer.music.load(self.cur_track)  # Replace with your file path
+        pygame.mixer.music.set_volume(0.15)  # Set volume (15%)
+        pygame.mixer.music.play(-1)  # Loop indefinitely
 
         # initialize camera
         self.camera = Camera.Camera(SCREEN_WIDTH, SCREEN_HEIGHT)
@@ -56,8 +65,6 @@ class Game:
 
         # Initialize the background
         self.background = Background(self.levels[self.curLevel], self.screen, SCREEN_WIDTH, SCREEN_HEIGHT)
-
-        
 
         self.ground_tiles = self.tile_map.get_tile_objects_with_masks(layer_name="Ground", property_name="collision")  # Get the tiles with rects and masks
         self.painting_tiles = self.tile_map.get_tile_objects_with_masks(layer_name="Paintings", property_name="collision")  # Get the tiles with rects and masks
