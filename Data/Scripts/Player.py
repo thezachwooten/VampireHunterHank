@@ -57,7 +57,7 @@ class Player(pygame.sprite.Sprite):
         self.health_overlay = pygame.transform.scale(self.health_overlay, (125, 50))
 
         # current projectiles
-        self.projectiles = []
+        self.projectiles = pygame.sprite.Group()
         self.MaxProjectiles = 1 # current max # of fireballs on screen at a time
 
     def draw(self, surf, camera):
@@ -100,7 +100,7 @@ class Player(pygame.sprite.Sprite):
         # Projectile stuff
         for projectile in self.projectiles:
             if projectile.is_alive == False:
-                self.projectiles.pop() # remove projectile if it has expired
+                projectile.kill() # remove projectile if it has expired
             projectile.update(dt, enemies_SG, ground_tile) # update
 
         # painting collision
@@ -348,4 +348,4 @@ class Player(pygame.sprite.Sprite):
                 anims = Animations.Animations(utils.load_separate_frames_from_img("Projectiles/Fireball", 5), 60) # give fireball animations 
 
             )
-            self.projectiles.append(fireball)
+            self.projectiles.add(fireball)

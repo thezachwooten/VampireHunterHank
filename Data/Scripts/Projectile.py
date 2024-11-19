@@ -35,6 +35,9 @@ class Projectile(pygame.sprite.Sprite):
         self.is_alive = True
 
     def update(self, dt, enemies, ground_tiles):
+        # alive update
+        if self.is_alive == False:
+            self.kill()
         # update what direction projectile is facing based on its velocity
         if (self.velocity.x < 0):
             self.FACING_RIGHT = False
