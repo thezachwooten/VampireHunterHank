@@ -167,9 +167,6 @@ class Game:
                 skeleton.kill()
             else:
                 self.skeleton.draw(self.screen, self.camera)
-        # player projectiles
-        for projectile in self.player.projectiles:
-            projectile.draw(self.screen) # draw 
         # Update Camera
         self.camera.update(self.player, self.map_width, self.map_height)
         # Draw Map

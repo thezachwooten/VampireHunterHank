@@ -31,6 +31,9 @@ class Projectile(pygame.sprite.Sprite):
         self.FACING_LEFT = False
         self.FACING_RIGHT = False
 
+        # alive 
+        self.is_alive = True
+
     def update(self, dt):
         # update what direction projectile is facing based on its velocity
         if (self.velocity.x < 0):
@@ -54,10 +57,10 @@ class Projectile(pygame.sprite.Sprite):
         # check if projectile expired
         current_time = pygame.time.get_ticks()
         if current_time - self.spawn_time >= self.lifetime:
-            self.kill() # Remove the projectile if its lifetime has passed
+            self.is_alive = False; # Remove the projectile if its lifetime has passed
         # Remove if it goes off-screen
         if (self.rect.right < 0 or self.rect.left > SCREEN_WIDTH or self.rect.bottom < 0 or self.rect.top > SCREEN_HEIGHT):
-            self.kill() # Remove
+            self.is_alive = False; # Remove
         # animation stuff
         if hasattr(self, 'current_animation'):
             self.current_animation.update(dt)

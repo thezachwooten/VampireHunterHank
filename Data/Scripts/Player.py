@@ -57,7 +57,7 @@ class Player(pygame.sprite.Sprite):
 
         # current projectiles
         self.projectiles = []
-        self.fireball = Animations.Animations(utils.load_separate_frames_from_img("Projectiles/Fireball", 5), 60) # 5 Frames at 60 FPS
+        self.MaxProjectiles = 1 # current max # of fireballs on screen at a time
 
     def draw(self, surf, camera):
         # Fix offsets facing left
@@ -76,6 +76,9 @@ class Player(pygame.sprite.Sprite):
         # draw healthbar
         # Health bar
         self.draw_health_bar(surf)
+        # player projectiles
+        for projectile in self.projectiles:
+            projectile.draw(surf) # draw 
 
 
     def update(self, dt, ground_tile, paintings, enemies, portals):
@@ -95,6 +98,8 @@ class Player(pygame.sprite.Sprite):
 
         # Projectile stuff
         for projectile in self.projectiles:
+            if projectile.is_alive == False:
+                self.projectiles.pop() # remove projectile if it has expired
             projectile.update(dt) # update
 
         # painting collision
@@ -225,7 +230,7 @@ class Player(pygame.sprite.Sprite):
         if keys[pygame.K_z]:
             self.attack()
         # Fireball
-        if keys[pygame.K_x]:
+        if keys[pygame.K_x] and len(self.projectiles) < self.MaxProjectiles:
             # shoot fireball
             self.fire_fireball()
     
@@ -338,7 +343,7 @@ class Player(pygame.sprite.Sprite):
                 pos=self.rect.center,
                 vel=(-5 if self.FACING_LEFT else 5, 0),  # Direction based on facing
                 animated = True,
-                anims = self.fireball # give fireball animations 
+                anims = Animations.Animations(utils.load_separate_frames_from_img("Projectiles/Fireball", 5), 60) # give fireball animations 
 
             )
             self.projectiles.append(fireball)
