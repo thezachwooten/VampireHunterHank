@@ -16,6 +16,7 @@ class Player(pygame.sprite.Sprite):
         self.animations['walk'] = Animations.Animations(utils.load_spritesheet('Player/Sprites/Converted_Vampire/Walk.png', 128, 128, 8), 120)  # 8 frames at 60 fps
         self.animations['jump'] = Animations.Animations(utils.load_spritesheet('Player/Sprites/Converted_Vampire/Jump.png', 128, 128, 7), 120)  # 7 frames at 60 fps
         self.animations['attack'] = Animations.Animations(utils.load_spritesheet('Player/Sprites/Converted_Vampire/Attack_2.png', 128, 128, 3), 120, False)  # 3 frames at 60 fps
+        self.animations['fire'] = Animations.Animations(utils.load_spritesheet('Player/Sprites/Converted_Vampire/Hurt.png', 128, 128, 1), 120, False)  # 1 frames at 60 fps
 
         self.position, self.velocity = pygame.math.Vector2(position[0], position[1]), pygame.math.Vector2(0, 0)
         self.current_animation = self.animations['idle']  # Start with idle animation
@@ -233,6 +234,7 @@ class Player(pygame.sprite.Sprite):
         if keys[pygame.K_x] and len(self.projectiles) < self.MaxProjectiles:
             # shoot fireball
             self.fire_fireball()
+            self.current_animation = self.animations['fire']
     
 
     def jump(self):
@@ -340,7 +342,7 @@ class Player(pygame.sprite.Sprite):
             # create a new fireball
             fireball = Projectile.Projectile(
                 image= None,
-                pos=self.rect.center,
+                pos= (self.position[0] + self.rect.width, self.position[1] - self.rect.height /2),
                 vel=(-5 if self.FACING_LEFT else 5, 0),  # Direction based on facing
                 animated = True,
                 anims = Animations.Animations(utils.load_separate_frames_from_img("Projectiles/Fireball", 5), 60) # give fireball animations 
