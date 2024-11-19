@@ -82,7 +82,7 @@ class Player(pygame.sprite.Sprite):
             projectile.draw(surf) # draw 
 
 
-    def update(self, dt, ground_tile, paintings, enemies, portals):
+    def update(self, dt, ground_tile, paintings, enemies, portals, enemies_SG):
         # Move
         self.handle_input()
         self.horizontal_movement(dt)
@@ -101,7 +101,7 @@ class Player(pygame.sprite.Sprite):
         for projectile in self.projectiles:
             if projectile.is_alive == False:
                 self.projectiles.pop() # remove projectile if it has expired
-            projectile.update(dt) # update
+            projectile.update(dt, enemies_SG, ground_tile) # update
 
         # painting collision
         self.paintHits(paintings)

@@ -34,7 +34,7 @@ class Projectile(pygame.sprite.Sprite):
         # alive 
         self.is_alive = True
 
-    def update(self, dt):
+    def update(self, dt, enemies, ground_tiles):
         # update what direction projectile is facing based on its velocity
         if (self.velocity.x < 0):
             self.FACING_RIGHT = False
@@ -68,6 +68,23 @@ class Projectile(pygame.sprite.Sprite):
             if self.FACING_LEFT == True:
                 self.image = pygame.transform.flip(self.image,1,0)
 
+        # collisions
+        self.check_collision(enemies)
+        self.get_hits(ground_tiles)
+
     def draw(self, screen):
         # Draw the projectile on the screen
         screen.blit(self.image, self.rect)
+
+    # method to check hits with target_group
+    def check_collision(self, target_group):
+        collisions = pygame.sprite.spritecollide(self, target_group, False, pygame.sprite.collide_mask)
+        if collisions:
+            print("FIREBALL HIT")  # Destroy the projectile upon collision
+            self.kill()
+        return collisions
+    def get_hits(self, tile_sprites):
+        for tile in tile_sprites:
+            if pygame.sprite.collide_mask(self, tile):
+                print("Surface Hit")
+                self.kill()
