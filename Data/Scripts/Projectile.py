@@ -85,7 +85,7 @@ class Projectile(pygame.sprite.Sprite):
         if collisions:
             print("FIREBALL HIT")  # Destroy the projectile upon collision
             self.kill()
-        return collisions
+    # method to check hits with envrionment
     def get_hits(self, tile_sprites):
         for tile in tile_sprites:
             if pygame.sprite.collide_mask(self, tile):
