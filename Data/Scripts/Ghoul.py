@@ -7,6 +7,7 @@ class Ghoul(pygame.sprite.Sprite):
     def __init__(self, game, position=(0,0)):
         super().__init__()  # Initialize the Sprite parent class
         self.game = game
+        self.type = "Ghoul"  
 
         self.animations = {}
 

@@ -10,7 +10,8 @@ class Skeleton(pygame.sprite.Sprite):
         
         self.game = game
         self.scale = scale
-        
+        self.type = "skelly"        
+
         # Animations
         self.animations = {}
         # Idle
@@ -25,8 +26,6 @@ class Skeleton(pygame.sprite.Sprite):
         self.current_animation = self.animations['idle']  # Start with idle animation
         self.image = self.current_animation.get_current_frame()
         # Rect alignment
-        self.rect = self.image.get_rect()
-
         self.update_image() # update skeleton image/mask
 
         self.last_move_time = 0
