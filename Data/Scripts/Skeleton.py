@@ -53,7 +53,7 @@ class Skeleton(pygame.sprite.Sprite):
         # Ensure the rect aligns with the current image and position
         self.rect = self.image.get_rect()
         self.rect.centerx = self.position.x  # Align rect with position
-        self.rect.bottom = self.position.y + 15
+        self.rect.bottom = self.position.y + 15 # weird floating so added this 15 to push down. Can't move so shouldn't be an issue
 
     def update(self, dt, player):
         self.horizontal_movement(dt)
@@ -86,3 +86,11 @@ class Skeleton(pygame.sprite.Sprite):
     def limit_velocity(self, max_vel):
         min(-max_vel, max(self.velocity.x, max_vel))
         if abs(self.velocity.x) < .01: self.velocity.x = 0
+
+    # method to detect player via a invisible box
+    def detect_player(self, player):
+        pass
+
+    # method to shoot arrow if player is detected
+    def shoot_arrow(self, player):
+        pass
