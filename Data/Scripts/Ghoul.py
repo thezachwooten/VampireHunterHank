@@ -63,9 +63,9 @@ class Ghoul(pygame.sprite.Sprite):
 
 
     def update(self, dt, player):
-        self.horizontal_movement(dt)
         # check if player is deteced
         if not self.is_dying:
+            self.horizontal_movement(dt)
             self.move_ai() # move
             self.check_attack(player) # check if player can be attacked and attack if so
         # check if health reaches zero

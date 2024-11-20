@@ -168,23 +168,6 @@ class Game:
         for enemy in self.enemies:
             enemy.update(self.dt, self.player) # update enemy
             enemy.draw(self.screen, self.camera)
-
-        """
-        # Update ghouls
-        for ghoul in self.ghouls[:]:  # Iterate over a copy of the list
-            ghoul.update(self.dt, self.player)
-            if ghoul.health <= 0:  # Check if the ghoul is dead
-                ghoul.is_dying = True # set ghould to dying 
-            else:
-                ghoul.draw(self.screen, self.camera)  # Draw if alive
-        # Update Skeletons
-        for skeleton in self.skeletons[:]:
-            self.skeleton.update(self.dt)
-            if skeleton.health <= 0:
-                skeleton.kill()
-            else:
-                self.skeleton.draw(self.screen, self.camera)
-        """
         # Update Camera
         self.camera.update(self.player, self.map_width, self.map_height)
         # Draw Map

@@ -34,9 +34,14 @@ class Skeleton(pygame.sprite.Sprite):
         self.last_move_time = 0
         self.state = 'pause'  # Start in the "move_left" state
         self.FACING_LEFT = random.choice([True, False])
+        self.MOVE_LEFT = False
+        self.MOVE_RIGHT = False
 
         self.health = 100 # Initilize ghoul health to 100
         self.isDead = False
+
+        self.gravity, self.friction = .35, -.12
+        self.acceleration = pygame.math.Vector2(0, self.gravity)
 
     def draw(self, surf, camera):
         # Draw the ghoul image using the camera offset
@@ -54,7 +59,7 @@ class Skeleton(pygame.sprite.Sprite):
         self.rect.center = self.position
 
     def update(self, dt, player):
-        # self.horizontal_movement(dt)
+        self.horizontal_movement(dt)
         # self.move_ai()
         # check if health reaches zero
         if self.health <= 0:
@@ -65,3 +70,21 @@ class Skeleton(pygame.sprite.Sprite):
         if self.FACING_LEFT == True:
             self.image = pygame.transform.flip(self.image,1,0)
         self.update_image()
+
+    # method to move horizontally 
+    def horizontal_movement(self, dt):
+        self.acceleration.x = 0
+        if self.MOVE_LEFT:
+            self.acceleration.x -= .3
+            self.FACING_LEFT = True
+        elif self.MOVE_RIGHT:
+            self.acceleration.x += .3
+            self.FACING_LEFT = False
+        self.acceleration.x += self.velocity.x * self.friction # Physics eq
+        self.velocity.x += self.acceleration.x * dt # Physics eq
+        self.limit_velocity(2) # limit the velocity
+        self.position.x += self.velocity.x * dt + (self.acceleration.x * 0.5) * (dt * dt) # update the position
+        self.rect.x = self.position.x # update the player image by the position
+    def limit_velocity(self, max_vel):
+        min(-max_vel, max(self.velocity.x, max_vel))
+        if abs(self.velocity.x) < .01: self.velocity.x = 0
