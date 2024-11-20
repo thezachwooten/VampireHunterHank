@@ -82,8 +82,9 @@ class Projectile(pygame.sprite.Sprite):
         if collisions:
             # loop through target 
             for enemy in collisions:
-                enemy.kill() # Reduce all health as fireball is an insta kill
+                enemy.health -= enemy.health # Reduce all health as fireball is an insta kill
                 print("FIREBALL HIT")  # Destroy the projectile upon collision
+                print("ENEMY HEALTH: " + str(enemy.health)) # Destroy the projectile upon collision
             self.kill()
     # method to check hits with envrionment
     def get_hits(self, tile_sprites):
