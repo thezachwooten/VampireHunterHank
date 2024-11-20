@@ -26,10 +26,8 @@ class Skeleton(pygame.sprite.Sprite):
         self.image = self.current_animation.get_current_frame()
         # Rect alignment
         self.rect = self.image.get_rect()
-        self.rect.centery = self.position.y  # Align the bottom of the rect with the starting position
-        self.rect.centerx = self.position.x  # Optionally center the rect horizontally at the position
 
-        self.update_image() # update ghoul image/mask
+        self.update_image() # update skeleton image/mask
 
         self.last_move_time = 0
         self.state = 'pause'  # Start in the "move_left" state
