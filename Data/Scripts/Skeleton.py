@@ -30,7 +30,7 @@ class Skeleton(pygame.sprite.Sprite):
         self.update_image() # update skeleton image/mask
 
         self.last_move_time = 0
-        self.state = 'pause'  # Start in the "move_left" state
+        self.state = 'pause'  # Start in the "pause" state
         self.FACING_LEFT = random.choice([True, False])
         self.MOVE_LEFT = False
         self.MOVE_RIGHT = False
