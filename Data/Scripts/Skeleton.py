@@ -5,7 +5,7 @@ from Data.Scripts import Animations
 
 class Skeleton(pygame.sprite.Sprite):
     # Constructor
-    def __init__(self, game, position=(0,0), scale=1.5):
+    def __init__(self, game, position=(0,0), scale=1.3):
         super().__init__()  # Initialize the Sprite parent class
         
         self.game = game
@@ -35,7 +35,7 @@ class Skeleton(pygame.sprite.Sprite):
         self.MOVE_LEFT = False
         self.MOVE_RIGHT = False
 
-        self.health = 100 # Initilize ghoul health to 100
+        self.health = 100 # Initilize Skeleton health to 100
         self.isDead = False
 
         self.gravity, self.friction = .35, -.12
@@ -44,17 +44,16 @@ class Skeleton(pygame.sprite.Sprite):
     def draw(self, surf, camera):
         # Draw the ghoul image using the camera offset
         surf.blit(self.image, camera.apply(self.rect))
-        pygame.draw.rect(surf, (255, 0, 0), camera.apply(self.rect), 2)  # Debug: rect around ghoul image
 
     # Helper function to update image/mask
     def update_image(self):
-        # Create the mask and bounding rect based on the current image
-        
+        # Create the mask from the full image
         self.mask = pygame.mask.from_surface(self.image)
-        self.bound_rect = self.mask.get_bounding_rects()[0]
-        self.image = self.image.subsurface(self.bound_rect).copy()
+        
+        # Ensure the rect aligns with the current image and position
         self.rect = self.image.get_rect()
-        self.rect.center = self.position
+        self.rect.centerx = self.position.x  # Align rect with position
+        self.rect.bottom = self.position.y + 15
 
     def update(self, dt, player):
         self.horizontal_movement(dt)
