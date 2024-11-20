@@ -34,7 +34,7 @@ class Projectile(pygame.sprite.Sprite):
         # alive variable
         self.is_alive = True
 
-    def update(self, dt, enemies, ground_tiles):
+    def update(self, dt, enemies, ground_tiles, camera_rect):
         # alive update
         if self.is_alive == False:
             self.kill()
@@ -61,9 +61,6 @@ class Projectile(pygame.sprite.Sprite):
         current_time = pygame.time.get_ticks()
         if current_time - self.spawn_time >= self.lifetime:
             self.is_alive = False; # Remove the projectile if its lifetime has passed
-        # Remove if it goes off-screen
-        if (self.rect.right < 0 or self.rect.left > SCREEN_WIDTH or self.rect.bottom < 0 or self.rect.top > SCREEN_HEIGHT):
-            self.is_alive = False; # Remove
         # animation stuff
         if hasattr(self, 'current_animation'):
             self.current_animation.update(dt)

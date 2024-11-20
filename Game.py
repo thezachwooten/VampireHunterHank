@@ -40,7 +40,7 @@ class Game:
 
         self.levels = ['Forest', 'Cemetary', 'Castle']
 
-        self.curLevel = 0 # 0-2; 3 total level choices
+        self.curLevel = 1 # 0-2; 3 total level choices
 
         # initialize level
         self.load_level() # this defaults to 'Forest' as curLevel is initialized to 0
@@ -159,7 +159,7 @@ class Game:
 
         # Handle player movement
         # Draw tilemap and player with camera offset
-        self.player.update(self.dt, self.ground_tiles, self.painting_tiles, self.portal_tiles, self.enemies)
+        self.player.update(self.dt, self.ground_tiles, self.painting_tiles, self.portal_tiles, self.enemies, self.camera)
         self.tile_map.draw(self.screen, self.camera, self.portal_tiles) # draw portals (DO IT HERE TO BE BEHIND PLAYER)
         self.player.draw(self.screen, self.camera)
 
