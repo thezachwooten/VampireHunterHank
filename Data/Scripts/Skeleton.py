@@ -1,17 +1,24 @@
 import pygame
+import random # module for random choice
 from Data.Scripts import utils
 from Data.Scripts import Animations
 
 class Skeleton(pygame.sprite.Sprite):
     # Constructor
-    def __init__(self, game, position=(0,0)):
+    def __init__(self, game, position=(0,0), scale=1.5):
         super().__init__()  # Initialize the Sprite parent class
         
         self.game = game
+        self.scale = scale
         
         # Animations
         self.animations = {}
-        self.animations['idle'] = Animations.Animations(utils.load_spritesheet('Enemies/Skeletons/Idle.png', 128, 128, 7), 60) # default animation
+        # Idle
+        idle_frames = utils.load_spritesheet('Enemies/Skeletons/Idle.png', 128, 128, 7)
+        scaled_idle_frames = [pygame.transform.scale(frame, (int(frame.get_width() * self.scale), 
+                                                             int(frame.get_height() * self.scale)))
+                              for frame in idle_frames]
+        self.animations['idle'] = Animations.Animations(scaled_idle_frames, 60)
 
         # image 
         self.position, self.velocity = pygame.math.Vector2(position[0], position[1]), pygame.math.Vector2(0, 0)
@@ -24,7 +31,7 @@ class Skeleton(pygame.sprite.Sprite):
         self.last_move_time = 0
         self.state = 'pause'  # Start in the "move_left" state
         self.previous_state = 'move_left'
-        self.FACING_LEFT = False
+        self.FACING_LEFT = random.choice([True, False])
         self.MOVE_LEFT = False
         self.MOVE_RIGHT = False
         self.on_ground = False
@@ -50,7 +57,7 @@ class Skeleton(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.center = self.position
 
-    def update(self, dt):
+    def update(self, dt, player):
         # self.horizontal_movement(dt)
         # self.move_ai()
         # check if health reaches zero
