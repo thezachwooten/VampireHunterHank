@@ -25,6 +25,7 @@ class Skeleton(pygame.sprite.Sprite):
         self.position, self.velocity = pygame.math.Vector2(position[0], position[1]), pygame.math.Vector2(0, 0)
         self.current_animation = self.animations['idle']  # Start with idle animation
         self.image = self.current_animation.get_current_frame()
+        self.rect = self.image.get_rect()
         # Rect alignment
         self.update_image() # update skeleton image/mask
 

@@ -1,2 +1,5 @@
 A 2-D platformer game following Vampire Hunter Hank, a normal man turned vampire after his family was kidnapped by the undead lords.
 CURRENTLY WORK-IN-PROGRESS
+
+ALL scripts developed by Zach wooten
+currently have game almost finished. Bug with projectiles not working against skeltons and still need to implement vampires. Spent most of the milestone refactoring code and adding ui and music and easy access for levels
