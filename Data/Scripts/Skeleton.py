@@ -83,6 +83,7 @@ class Skeleton(pygame.sprite.Sprite):
         self.limit_velocity(2) # limit the velocity
         self.position.x += self.velocity.x * dt + (self.acceleration.x * 0.5) * (dt * dt) # update the position
         self.rect.x = self.position.x # update the player image by the position
+    # method to limit velocity
     def limit_velocity(self, max_vel):
         min(-max_vel, max(self.velocity.x, max_vel))
         if abs(self.velocity.x) < .01: self.velocity.x = 0
