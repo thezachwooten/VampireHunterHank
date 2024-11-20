@@ -75,6 +75,7 @@ class Projectile(pygame.sprite.Sprite):
     def draw(self, screen, camera):
         # Draw the projectile on the screen
         screen.blit(self.image, camera.apply(self.rect))
+        pygame.draw.rect(screen, (255, 0, 0), camera.apply(self.rect), 2)
 
     # method to check hits with target_group
     def check_collision(self, target_group):
