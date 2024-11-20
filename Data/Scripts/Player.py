@@ -79,10 +79,10 @@ class Player(pygame.sprite.Sprite):
         self.draw_health_bar(surf)
         # player projectiles
         for projectile in self.projectiles:
-            projectile.draw(surf) # draw 
+            projectile.draw(surf, camera) # draw 
 
 
-    def update(self, dt, ground_tile, paintings, enemies, portals, enemies_SG):
+    def update(self, dt, ground_tile, paintings, portals, enemies_SG):
         # Move
         self.handle_input()
         self.horizontal_movement(dt)
@@ -91,7 +91,7 @@ class Player(pygame.sprite.Sprite):
         self.check_collisionY(ground_tile)
 
         if self.is_attacking:
-            self.check_attack_hits(enemies)
+            self.check_attack_hits(enemies_SG)
 
         if self.is_attacking and self.current_animation.is_finished:
             self.is_attacking = False
@@ -287,7 +287,7 @@ class Player(pygame.sprite.Sprite):
         )
     
         # Iterate over enemies to see if any are within the attack range
-        for enemy in enemies[:]:  # Iterate over a copy of the list
+        for enemy in enemies:  # Iterate over a copy of the list
             if enemy.health > 0:  # Only check if the enemy is alive
                 if attack_rect.colliderect(enemy.rect):  # Check if enemy is in the attack range
                     # Apply damage to the enemy
@@ -297,7 +297,7 @@ class Player(pygame.sprite.Sprite):
                     # Check if the enemy’s health has dropped to zero
                     if enemy.health <= 0:
                         print("Enemy has died!")
-                        enemies.remove(enemy)  # Remove dead enemy from the list
+                        enemy.kill() # Remove dead enemy from the list
     
     # method for dealing with portal interaction
     def portal_hits(self, portals):

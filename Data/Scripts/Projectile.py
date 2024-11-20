@@ -75,15 +75,18 @@ class Projectile(pygame.sprite.Sprite):
         self.check_collision(enemies)
         self.get_hits(ground_tiles)
 
-    def draw(self, screen):
+    def draw(self, screen, camera):
         # Draw the projectile on the screen
-        screen.blit(self.image, self.rect)
+        screen.blit(self.image, camera.apply(self.rect))
 
     # method to check hits with target_group
     def check_collision(self, target_group):
         collisions = pygame.sprite.spritecollide(self, target_group, False, pygame.sprite.collide_mask)
         if collisions:
-            print("FIREBALL HIT")  # Destroy the projectile upon collision
+            # loop through target 
+            for enemy in collisions:
+                enemy.kill() # Reduce all health as fireball is an insta kill
+                print("FIREBALL HIT")  # Destroy the projectile upon collision
             self.kill()
     # method to check hits with envrionment
     def get_hits(self, tile_sprites):

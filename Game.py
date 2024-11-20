@@ -80,18 +80,14 @@ class Game:
         # enemy sprite group
         self.enemies = pygame.sprite.Group()  # Unified enemy sprite group
         # loop ghoul spawner
-        self.ghouls = []
         for ghoulspawn in self.ghouldSpawner:
             start_x, start_y = ghoulspawn.rect.x, ghoulspawn.rect.y  # Access position
             ghoul = Ghoul.Ghoul(self, (start_x,start_y))
-            self.ghouls.append(ghoul)
             self.enemies.add(ghoul)
         # skeleton
-        self.skeletons = []
         for skeletonSpawn in self.skeletonSpawner:
             start_x, start_y = skeletonSpawn.rect.x, skeletonSpawn.rect.y # Access position
             skeleton = Skeleton.Skeleton(self, (start_x,start_y))
-            self.skeletons.append(skeleton)
             self.enemies.add(skeleton)
 
         
@@ -163,9 +159,17 @@ class Game:
 
         # Handle player movement
         # Draw tilemap and player with camera offset
-        self.player.update(self.dt, self.ground_tiles, self.painting_tiles, self.ghouls, self.portal_tiles, self.enemies)
+        self.player.update(self.dt, self.ground_tiles, self.painting_tiles, self.portal_tiles, self.enemies)
         self.tile_map.draw(self.screen, self.camera, self.portal_tiles) # draw portals (DO IT HERE TO BE BEHIND PLAYER)
         self.player.draw(self.screen, self.camera)
+
+
+        # Update Enemies
+        for enemy in self.enemies:
+            enemy.update(self.dt, self.player) # update enemy
+            enemy.draw(self.screen, self.camera)
+
+        """
         # Update ghouls
         for ghoul in self.ghouls[:]:  # Iterate over a copy of the list
             ghoul.update(self.dt, self.player)
@@ -180,6 +184,7 @@ class Game:
                 skeleton.kill()
             else:
                 self.skeleton.draw(self.screen, self.camera)
+        """
         # Update Camera
         self.camera.update(self.player, self.map_width, self.map_height)
         # Draw Map
