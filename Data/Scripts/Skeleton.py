@@ -43,6 +43,7 @@ class Skeleton(pygame.sprite.Sprite):
         self.acceleration = pygame.math.Vector2(0, self.gravity)
 
         self.is_attacking = False # Start not attacking
+        self.see_player = False
 
         self.projectiles = pygame.sprite.Group()
 
@@ -63,8 +64,8 @@ class Skeleton(pygame.sprite.Sprite):
     def update(self, dt, player, ground_tile, camera, playerSG):
         self.horizontal_movement(dt)
         # detection of player
-        self.detect_player(player, 20)
-        if self.detect_player:
+        self.detect_player(player, 50)
+        if self.see_player:
             self.shoot_arrow()
         # check if health reaches zero
         if self.health <= 0:
@@ -125,7 +126,9 @@ class Skeleton(pygame.sprite.Sprite):
         # detection with above rect
         if player.health > 0: # only if player is alive
             if attack_rect.colliderect(player.rect) and len(self.projectiles) < 1:
-                self.shoot_arrow()
+                self.see_player = True
+            else:
+                self.see_player = False
             
         
 
@@ -133,11 +136,9 @@ class Skeleton(pygame.sprite.Sprite):
     def shoot_arrow(self):
         if not self.is_attacking:
             arrow = Projectile.Projectile(
-                image= None,
+                image= utils.load_image("Projectiles/Arrow/0.png"),
                 pos= (self.rect.centerx, self.rect.centery),
-                vel=(-5 if self.FACING_LEFT else 5, 0),  # Direction based on facing
-                animated = True,
-                anims = Animations.Animations(utils.load_separate_frames_from_img("Projectiles/Fireball", 5), 60) # give fireball animations 
+                vel=(-5 if self.FACING_LEFT else 5, 0),  # Direction based on facing 
 
             )
             self.projectiles.add(arrow)
