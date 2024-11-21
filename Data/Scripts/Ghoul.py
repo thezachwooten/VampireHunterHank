@@ -63,7 +63,7 @@ class Ghoul(pygame.sprite.Sprite):
         self.rect.center = self.position
 
 
-    def update(self, dt, player):
+    def update(self, dt, player, ground_tile, camera, playerSG):
         # check if player is deteced
         if not self.is_dying:
             self.horizontal_movement(dt)

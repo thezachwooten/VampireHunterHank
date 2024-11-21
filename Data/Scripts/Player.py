@@ -6,7 +6,7 @@ from Data.Scripts import Projectile # import Projectile class
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, game, position=(0,0)):
-        pygame.sprite.Sprite.__init__(self)
+        super().__init__()  # Initialize the Sprite parent class
         self.game = game
 
         self.animations = {}

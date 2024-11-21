@@ -77,6 +77,8 @@ class Game:
         start_x, start_y = player_start_pos.rect.x, player_start_pos.rect.y  # Access position
         # Initialize player
         self.player = Player.Player(self,(start_x,start_y))
+        self.playerSG = pygame.sprite.Group()
+        self.playerSG.add(self.player)
         # enemy sprite group
         self.enemies = pygame.sprite.Group()  # Unified enemy sprite group
         # loop ghoul spawner
@@ -166,7 +168,7 @@ class Game:
 
         # Update Enemies
         for enemy in self.enemies:
-            enemy.update(self.dt, self.player) # update enemy
+            enemy.update(self.dt, self.player, self.ground_tiles, self.camera, self.playerSG) # update enemy
             enemy.draw(self.screen, self.camera)
         # Update Camera
         self.camera.update(self.player, self.map_width, self.map_height)

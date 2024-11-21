@@ -1,5 +1,6 @@
 import pygame
 import random # module for random choice
+from Data.Scripts import Projectile 
 from Data.Scripts import utils
 from Data.Scripts import Animations
 
@@ -41,6 +42,10 @@ class Skeleton(pygame.sprite.Sprite):
         self.gravity, self.friction = .35, -.12
         self.acceleration = pygame.math.Vector2(0, self.gravity)
 
+        self.is_attacking = False # Start not attacking
+
+        self.projectiles = pygame.sprite.Group()
+
     def draw(self, surf, camera):
         # Draw the ghoul image using the camera offset
         surf.blit(self.image, camera.apply(self.rect))
@@ -55,9 +60,12 @@ class Skeleton(pygame.sprite.Sprite):
         self.rect.centerx = self.position.x  # Align rect with position
         self.rect.bottom = self.position.y + 15 # weird floating so added this 15 to push down. Can't move so shouldn't be an issue
 
-    def update(self, dt, player):
+    def update(self, dt, player, ground_tile, camera, playerSG):
         self.horizontal_movement(dt)
-        # self.move_ai()
+        # detection of player
+        self.detect_player(player, 20)
+        if self.detect_player:
+            self.shoot_arrow()
         # check if health reaches zero
         if self.health <= 0:
             self.kill()
@@ -67,6 +75,12 @@ class Skeleton(pygame.sprite.Sprite):
         if self.FACING_LEFT == True:
             self.image = pygame.transform.flip(self.image,1,0)
         self.update_image()
+
+        # Projectile stuff
+        for projectile in self.projectiles:
+            if projectile.is_alive == False:
+                projectile.kill() # remove projectile if it has expired
+            projectile.update(dt, playerSG, ground_tile, camera.camera_rect) # update
 
     # method to move horizontally 
     def horizontal_movement(self, dt):
@@ -82,15 +96,48 @@ class Skeleton(pygame.sprite.Sprite):
         self.limit_velocity(2) # limit the velocity
         self.position.x += self.velocity.x * dt + (self.acceleration.x * 0.5) * (dt * dt) # update the position
         self.rect.x = self.position.x # update the player image by the position
+
     # method to limit velocity
     def limit_velocity(self, max_vel):
         min(-max_vel, max(self.velocity.x, max_vel))
         if abs(self.velocity.x) < .01: self.velocity.x = 0
 
     # method to detect player via a invisible box
-    def detect_player(self, player):
-        pass
+    def detect_player(self, player, attack_range):
+        # Determine the attack area based on the player's facing direction
+        if self.FACING_LEFT:
+            # Create an attack rect extending to the left of the player
+            attack_rect = pygame.Rect(
+                self.rect.left - attack_range,  # Start slightly to the left of the player
+                self.rect.top,                   # Keep the same vertical position
+                attack_range,                    # Width of the attack range
+                self.rect.height                 # Same height as the player
+            )
+        else:
+            # Create an attack rect extending to the right of the player
+            attack_rect = pygame.Rect(
+                self.rect.right,                 # Start at the player's right edge
+                self.rect.top,                   # Keep the same vertical position
+                attack_range,                    # Width of the attack range
+                self.rect.height                 # Same height as the player
+        )
+            
+        # detection with above rect
+        if player.health > 0: # only if player is alive
+            if attack_rect.colliderect(player.rect) and len(self.projectiles) < 1:
+                self.shoot_arrow()
+            
+        
 
     # method to shoot arrow if player is detected
-    def shoot_arrow(self, player):
-        pass
+    def shoot_arrow(self):
+        if not self.is_attacking:
+            arrow = Projectile.Projectile(
+                image= None,
+                pos= (self.rect.centerx, self.rect.centery),
+                vel=(-5 if self.FACING_LEFT else 5, 0),  # Direction based on facing
+                animated = True,
+                anims = Animations.Animations(utils.load_separate_frames_from_img("Projectiles/Fireball", 5), 60) # give fireball animations 
+
+            )
+            self.projectiles.add(arrow)
