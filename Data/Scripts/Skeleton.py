@@ -32,7 +32,7 @@ class Skeleton(pygame.sprite.Sprite):
 
         self.last_move_time = 0
         self.state = 'pause'  # Start in the "pause" state
-        self.FACING_LEFT = True #random.choice([True, False])
+        self.FACING_LEFT = random.choice([True, False])
         self.MOVE_LEFT = False
         self.MOVE_RIGHT = False
 
