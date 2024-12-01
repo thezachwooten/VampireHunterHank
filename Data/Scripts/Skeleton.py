@@ -32,7 +32,7 @@ class Skeleton(pygame.sprite.Sprite):
 
         self.last_move_time = 0
         self.state = 'pause'  # Start in the "pause" state
-        self.FACING_LEFT = random.choice([True, False])
+        self.FACING_LEFT = True #random.choice([True, False])
         self.MOVE_LEFT = False
         self.MOVE_RIGHT = False
 
@@ -48,8 +48,13 @@ class Skeleton(pygame.sprite.Sprite):
         self.projectiles = pygame.sprite.Group()
 
     def draw(self, surf, camera):
-        # Draw the ghoul image using the camera offset
+        # Draw the skeleton image using the camera offset
         surf.blit(self.image, camera.apply(self.rect))
+        # pygame.draw.rect(surf, (255,0,0), self.rect, 2) # debug rect
+
+        for projectile in self.projectiles:
+            projectile.draw(surf, camera)
+
 
     # Helper function to update image/mask
     def update_image(self):
@@ -64,7 +69,7 @@ class Skeleton(pygame.sprite.Sprite):
     def update(self, dt, player, ground_tile, camera, playerSG):
         self.horizontal_movement(dt)
         # detection of player
-        self.detect_player(player, 50)
+        self.detect_player(player, 200)
         if self.see_player:
             self.shoot_arrow()
         # check if health reaches zero
@@ -109,24 +114,25 @@ class Skeleton(pygame.sprite.Sprite):
         if self.FACING_LEFT:
             # Create an attack rect extending to the left of the player
             attack_rect = pygame.Rect(
-                self.rect.left - attack_range,  # Start slightly to the left of the player
-                self.rect.top,                   # Keep the same vertical position
+                self.rect.left - attack_range + 50,  # Start slightly to the left of the player
+                self.rect.top + 75,                   # Keep the same vertical position
                 attack_range,                    # Width of the attack range
-                self.rect.height                 # Same height as the player
+                self.rect.height /2                # Same height as the player
             )
         else:
             # Create an attack rect extending to the right of the player
             attack_rect = pygame.Rect(
-                self.rect.right,                 # Start at the player's right edge
-                self.rect.top,                   # Keep the same vertical position
+                self.rect.right - 50,                 # Start at the player's right edge
+                self.rect.top + 75,                   # Keep the same vertical position
                 attack_range,                    # Width of the attack range
-                self.rect.height                 # Same height as the player
-        )
+                self.rect.height / 2               # Same height as the player
+        ) 
             
         # detection with above rect
         if player.health > 0: # only if player is alive
             if attack_rect.colliderect(player.rect) and len(self.projectiles) < 1:
                 self.see_player = True
+                print("Player detected")
             else:
                 self.see_player = False
             
@@ -137,8 +143,8 @@ class Skeleton(pygame.sprite.Sprite):
         if not self.is_attacking:
             arrow = Projectile.Projectile(
                 image= utils.load_image("Projectiles/Arrow/0.png"),
-                pos= (self.rect.centerx, self.rect.centery),
-                vel=(-5 if self.FACING_LEFT else 5, 0),  # Direction based on facing 
+                pos= (self.rect.centerx - 75, self.rect.centery + 10),
+                vel=(-2 if self.FACING_LEFT else 2, 0),  # Direction based on facing 
 
             )
             self.projectiles.add(arrow)
