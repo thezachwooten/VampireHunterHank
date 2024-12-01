@@ -152,7 +152,7 @@ class Skeleton(pygame.sprite.Sprite):
             arrow = Projectile.Projectile(
                 image= utils.load_image("Projectiles/Arrow/0.png"),
                 pos= (self.rect.centerx - 75, self.rect.centery + 10),
-                vel=(-4 if self.FACING_LEFT else 4, 0),  # Direction based on facing 
+                vel=(-3 if self.FACING_LEFT else 3, 0),  # Direction based on facing 
 
             )
             self.projectiles.add(arrow)
