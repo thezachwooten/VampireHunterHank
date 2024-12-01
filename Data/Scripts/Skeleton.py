@@ -46,6 +46,7 @@ class Skeleton(pygame.sprite.Sprite):
         self.see_player = False
 
         self.projectiles = pygame.sprite.Group()
+        self.time_since_turn = 0
 
     def draw(self, surf, camera):
         # Draw the skeleton image using the camera offset
@@ -67,6 +68,7 @@ class Skeleton(pygame.sprite.Sprite):
         self.rect.bottom = self.position.y + 15 # weird floating so added this 15 to push down. Can't move so shouldn't be an issue
 
     def update(self, dt, player, ground_tile, camera, playerSG):
+        self.time_since_turn += 1
         self.horizontal_movement(dt)
         # detection of player
         self.detect_player(player, 200)
@@ -87,6 +89,12 @@ class Skeleton(pygame.sprite.Sprite):
             if projectile.is_alive == False:
                 projectile.kill() # remove projectile if it has expired
             projectile.update(dt, playerSG, ground_tile, camera.camera_rect) # update
+
+        # turn randomly
+        if (not self.see_player and self.time_since_turn > 200):
+            self.time_since_turn = 0
+            # Toggle FACING_LEFT
+            self.FACING_LEFT = not self.FACING_LEFT
 
     # method to move horizontally 
     def horizontal_movement(self, dt):
@@ -144,7 +152,7 @@ class Skeleton(pygame.sprite.Sprite):
             arrow = Projectile.Projectile(
                 image= utils.load_image("Projectiles/Arrow/0.png"),
                 pos= (self.rect.centerx - 75, self.rect.centery + 10),
-                vel=(-2 if self.FACING_LEFT else 2, 0),  # Direction based on facing 
+                vel=(-4 if self.FACING_LEFT else 4, 0),  # Direction based on facing 
 
             )
             self.projectiles.add(arrow)
