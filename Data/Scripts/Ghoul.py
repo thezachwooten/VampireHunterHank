@@ -49,7 +49,6 @@ class Ghoul(pygame.sprite.Sprite):
     def draw(self, surf, camera):
         # Draw the ghoul image using the camera offset
         surf.blit(self.image, camera.apply(self.rect))
-        pygame.draw.rect(surf, (255, 0, 0), camera.apply(self.rect), 2)  # Debug: rect around ghoul image
 
     # Helper function to update image/mask
     def update_image(self):

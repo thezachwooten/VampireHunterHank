@@ -24,7 +24,6 @@ class Tilemap():
             if not tile.collected:  # Only draw tiles that are not collected
                 # Draw each tile with the camera offset applied
                 screen.blit(tile.image, camera.apply(tile.rect))    
-                pygame.draw.rect(screen, (255,0,0), camera.apply(tile.rect), 1) # debug rects
 
 
     def get_map_size(self):
