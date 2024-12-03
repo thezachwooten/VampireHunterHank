@@ -22,11 +22,11 @@ class Skeleton(pygame.sprite.Sprite):
                               for frame in idle_frames]
         self.animations['idle'] = Animations.Animations(scaled_idle_frames, 60)
         # Fire
-        fire_frames = utils.load_spritesheet('Enemies/Skeletons/Shot_1.png', 128, 128, 15)
+        fire_frames = utils.load_spritesheet('Enemies/Skeletons/Shot_1.png', 128, 128, 13)
         scaled_fire_frames = [pygame.transform.scale(frame, (int(frame.get_width() * self.scale), 
                                                              int(frame.get_height() * self.scale)))
                               for frame in fire_frames]
-        self.animations['fire'] = Animations.Animations(scaled_fire_frames, 60)
+        self.animations['fire'] = Animations.Animations(scaled_fire_frames, 240, False)
 
         # image 
         self.position, self.velocity = pygame.math.Vector2(position[0], position[1]), pygame.math.Vector2(0, 0)
@@ -76,31 +76,41 @@ class Skeleton(pygame.sprite.Sprite):
     def update(self, dt, player, ground_tile, camera, playerSG):
         self.time_since_turn += 1
         self.horizontal_movement(dt)
-        # detection of player
         self.detect_player(player, 200)
-        if self.see_player:
-            self.shoot_arrow()
-        # check if health reaches zero
-        if self.health <= 0:
-            self.kill()
+
+        # Handle shooting logic
+        if self.is_attacking:
+            if self.current_animation.is_finished:  # Check if the fire animation is done
+                print("Firing")
+                # Release the arrow
+                arrow = Projectile.Projectile(
+                    image=utils.load_image("Projectiles/Arrow/0.png"),
+                    pos=(self.rect.centerx - 75 if self.FACING_LEFT else self.rect.centerx + 75, 
+                        self.rect.centery + 10),
+                    vel=(-3 if self.FACING_LEFT else 3, 0),
+                )
+                self.projectiles.add(arrow)
+                self.current_animation = self.animations['idle']  # Return to idle animation
+                self.is_attacking = False  # Reset attacking state
+
         # Update the current animation
         self.current_animation.update(dt)
         self.image = self.current_animation.get_current_frame()
-        if self.FACING_LEFT == True:
-            self.image = pygame.transform.flip(self.image,1,0)
+        if self.FACING_LEFT:
+            self.image = pygame.transform.flip(self.image, 1, 0)
         self.update_image()
 
-        # Projectile stuff
+        # Update projectiles
         for projectile in self.projectiles:
-            if projectile.is_alive == False:
-                projectile.kill() # remove projectile if it has expired
-            projectile.update(dt, playerSG, ground_tile, camera.camera_rect) # update
+            if not projectile.is_alive:
+                projectile.kill()
+            projectile.update(dt, playerSG, ground_tile, camera.camera_rect)
 
-        # turn randomly
-        if (not self.see_player and self.time_since_turn > 200):
+        # Random turn logic
+        if not self.see_player and self.time_since_turn > 200:
             self.time_since_turn = 0
-            # Toggle FACING_LEFT
             self.FACING_LEFT = not self.FACING_LEFT
+
 
     # method to move horizontally 
     def horizontal_movement(self, dt):
@@ -146,7 +156,7 @@ class Skeleton(pygame.sprite.Sprite):
         if player.health > 0: # only if player is alive
             if attack_rect.colliderect(player.rect) and len(self.projectiles) < 1:
                 self.see_player = True
-                print("Player detected")
+                self.shoot_arrow()
             else:
                 self.see_player = False
             
@@ -155,10 +165,6 @@ class Skeleton(pygame.sprite.Sprite):
     # method to shoot arrow if player is detected
     def shoot_arrow(self):
         if not self.is_attacking:
-            arrow = Projectile.Projectile(
-                image= utils.load_image("Projectiles/Arrow/0.png"),
-                pos= (self.rect.centerx - 75, self.rect.centery + 10),
-                vel=(-3 if self.FACING_LEFT else 3, 0),  # Direction based on facing 
-
-            )
-            self.projectiles.add(arrow)
+            self.is_attacking = True  # Set attacking state
+            self.current_animation = self.animations['fire']  # Trigger fire animation
+            self.current_animation.reset()  # Reset animation to start from the beginning

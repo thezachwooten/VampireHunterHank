@@ -40,7 +40,7 @@ class Game:
 
         self.levels = ['Forest', 'Cemetary', 'Castle']
 
-        self.curLevel = 0 # 0-2; 3 total level choices
+        self.curLevel = 1 # 0-2; 3 total level choices
 
         # initialize level
         self.load_level() # this defaults to 'Forest' as curLevel is initialized to 0
