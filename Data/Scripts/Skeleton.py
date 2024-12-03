@@ -21,6 +21,12 @@ class Skeleton(pygame.sprite.Sprite):
                                                              int(frame.get_height() * self.scale)))
                               for frame in idle_frames]
         self.animations['idle'] = Animations.Animations(scaled_idle_frames, 60)
+        # Fire
+        fire_frames = utils.load_spritesheet('Enemies/Skeletons/Shot_1.png', 128, 128, 15)
+        scaled_fire_frames = [pygame.transform.scale(frame, (int(frame.get_width() * self.scale), 
+                                                             int(frame.get_height() * self.scale)))
+                              for frame in fire_frames]
+        self.animations['fire'] = Animations.Animations(scaled_fire_frames, 60)
 
         # image 
         self.position, self.velocity = pygame.math.Vector2(position[0], position[1]), pygame.math.Vector2(0, 0)

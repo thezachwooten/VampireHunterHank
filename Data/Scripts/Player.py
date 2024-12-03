@@ -306,7 +306,7 @@ class Player(pygame.sprite.Sprite):
         for portal in collisions:
             # check if player has map piece
             if self.foundPainting == 1:
-                print("MOVING TO NEXT LEVEL")
+                self.game.nextLevel()
             else:
                 print("NEED TO FIND MAP PIECE")
 
