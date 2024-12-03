@@ -110,6 +110,9 @@ class Skeleton(pygame.sprite.Sprite):
         if not self.see_player and self.time_since_turn > 200:
             self.time_since_turn = 0
             self.FACING_LEFT = not self.FACING_LEFT
+        # health
+        if self.health <= 0:
+            self.kill()
 
 
     # method to move horizontally 
