@@ -14,6 +14,7 @@ class Vampire(pygame.sprite.Sprite):
         self.animations['idle'] = Animations.Animations(utils.load_spritesheet('Enemies/Countess_Vampire/Idle.png', 128, 128, 5), 60)  # 5 frames at 60 fps
         self.animations['walk'] = Animations.Animations(utils.load_spritesheet('Enemies/Countess_Vampire/Walk.png', 128, 128, 6), 60)  # 5 frames at 60 fps
         self.animations['attack'] = Animations.Animations(utils.load_spritesheet('Enemies/Countess_Vampire/Attack_1.png', 128, 128, 6), 60, False)
+        self.animations['death'] = Animations.Animations(utils.load_spritesheet('Enemies/Countess_Vampire/Dead.png', 128, 128, 8), 60, False) # Death frame
 
         self.position, self.velocity = pygame.math.Vector2(position[0], position[1]), pygame.math.Vector2(0, 0)
         self.current_animation = self.animations['idle']  # Start with idle animation
@@ -56,11 +57,12 @@ class Vampire(pygame.sprite.Sprite):
     def update_image(self):
         # Create the mask and bounding rect based on the current image
         
-        self.mask = pygame.mask.from_surface(self.image)
-        self.bound_rect = self.mask.get_bounding_rects()[0]
-        self.image = self.image.subsurface(self.bound_rect).copy()
-        self.rect = self.image.get_rect()
-        self.rect.center = self.position
+        # self.mask = pygame.mask.from_surface(self.image)
+        # self.bound_rect = self.mask.get_bounding_rects()[0]
+        # self.image = self.image.subsurface(self.bound_rect).copy()
+        # self.rect = self.image.get_rect()
+        # self.rect.center = self.position
+        pass
 
 
     def update(self, dt, player, ground_tile, camera, playerSG):
