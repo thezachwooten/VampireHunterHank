@@ -1,4 +1,5 @@
 import pygame
+import random # module for random choice
 from Data.Scripts import utils
 from Data.Scripts import Animations
 
@@ -14,7 +15,7 @@ class Vampire(pygame.sprite.Sprite):
         self.animations['idle'] = Animations.Animations(utils.load_spritesheet('Enemies/Countess_Vampire/Idle.png', 128, 128, 5), 60)  # 5 frames at 60 fps
         self.animations['walk'] = Animations.Animations(utils.load_spritesheet('Enemies/Countess_Vampire/Walk.png', 128, 128, 6), 60)  # 5 frames at 60 fps
         self.animations['attack'] = Animations.Animations(utils.load_spritesheet('Enemies/Countess_Vampire/Attack_1.png', 128, 128, 6), 60, False)
-        self.animations['death'] = Animations.Animations(utils.load_spritesheet('Enemies/Countess_Vampire/Dead.png', 128, 128, 8), 60, False) # Death frame
+        self.animations['death'] = Animations.Animations(utils.load_spritesheet('Enemies/Countess_Vampire/Dead.png', 128, 128, 8), 60, False) # Death
 
         self.position, self.velocity = pygame.math.Vector2(position[0], position[1]), pygame.math.Vector2(0, 0)
         self.current_animation = self.animations['idle']  # Start with idle animation
@@ -23,7 +24,7 @@ class Vampire(pygame.sprite.Sprite):
         
         self.update_image() # update Vampire image/mask
 
-        self.last_move_time = 0
+        self.last_move_time = random.randint(0,5) # random time since last move
         self.state = 'pause'  # Start in the "move_left" state
         self.previous_state = 'move_left'
         self.FACING_LEFT = False
@@ -34,11 +35,11 @@ class Vampire(pygame.sprite.Sprite):
         
         self.acceleration = pygame.math.Vector2(0, self.gravity)
 
-        self.health = 100 # Initilize ghoul health to 100
-        self.isDead = False # Ghoul is not dead
-        self.is_dying = False # Ghoul is not dying 
+        self.health = 100 # Initilize vamp health to 100
+        self.isDead = False # vamp is not dead
+        self.is_dying = False # vamp is not dying 
 
-        self.is_attacking = False # Ghoul is not attacking  
+        self.is_attacking = False # vamp is not attacking  
         self.attack_cooldown = 1.0  # Time between attacks
         self.last_attack_time = 0
         self.attack_width = 50  # Width of attack rect
@@ -49,20 +50,11 @@ class Vampire(pygame.sprite.Sprite):
     def draw(self, surf, camera):
         # Draw the Vampire image using the camera offset
         surf.blit(self.image, camera.apply(self.rect))
-        pygame.draw.rect(surf, (255, 0, 0), camera.apply(self.rect), 2)  # Debug: rect around Vampire image
-        attack_rect = self.get_attack_rect()
-        pygame.draw.rect(surf, (255, 0, 0), camera.apply(attack_rect), 2)  # Draw a red outline
 
     # Helper function to update image/mask
     def update_image(self):
-        # Create the mask and bounding rect based on the current image
-        
-        # self.mask = pygame.mask.from_surface(self.image)
-        # self.bound_rect = self.mask.get_bounding_rects()[0]
-        # self.image = self.image.subsurface(self.bound_rect).copy()
-        # self.rect = self.image.get_rect()
-        # self.rect.center = self.position
-        pass
+        self.rect = self.image.get_rect()
+        self.rect.center = self.position
 
 
     def update(self, dt, player, ground_tile, camera, playerSG):
@@ -120,7 +112,7 @@ class Vampire(pygame.sprite.Sprite):
         if self.state == 'pause':
             self.MOVE_LEFT = False
             self.MOVE_RIGHT = False
-            if current_time - self.last_move_time >= 2000:  # 2 seconds
+            if current_time - self.last_move_time >= 5000:  # 5 seconds
                 self.last_move_time = current_time
                 # Toggle between moving left and right after each pause
                 self.state = 'move_right' if self.previous_state == 'move_left' else 'move_left'
@@ -131,7 +123,7 @@ class Vampire(pygame.sprite.Sprite):
         elif self.state == 'move_left':
             self.MOVE_LEFT = True
             self.MOVE_RIGHT = False
-            if current_time - self.last_move_time >= 2000:  # 2 seconds
+            if current_time - self.last_move_time >= 5000:  # 5 seconds
                 self.MOVE_LEFT = False
                 self.last_move_time = current_time
                 self.state = 'pause'  # Switch to "pause" state
@@ -141,7 +133,7 @@ class Vampire(pygame.sprite.Sprite):
         elif self.state == 'move_right':
             self.MOVE_LEFT = False
             self.MOVE_RIGHT = True
-            if current_time - self.last_move_time >= 2000:  # 2 seconds
+            if current_time - self.last_move_time >= 5000:  # 5 seconds
                 self.MOVE_RIGHT = False
                 self.last_move_time = current_time
                 self.state = 'pause'  # Switch to "pause" state
@@ -149,9 +141,9 @@ class Vampire(pygame.sprite.Sprite):
     
     def get_attack_rect(self):
         if self.FACING_LEFT:  # Left
-            return pygame.Rect(self.rect.left - self.attack_width, self.rect.top, self.attack_width, self.attack_height)
+            return pygame.Rect((self.rect.left - self.attack_width + 50), self.rect.top + (self.rect.height /2 ), self.attack_width, self.attack_height)
         else:
-            return pygame.Rect(self.rect.right, self.rect.top, self.attack_width, self.attack_height)
+            return pygame.Rect(self.rect.right - 50, self.rect.top + (self.rect.height /2 ), self.attack_width, self.attack_height)
 
     def can_attack(self, player):
         now = pygame.time.get_ticks() / 1000  # Current time in seconds
