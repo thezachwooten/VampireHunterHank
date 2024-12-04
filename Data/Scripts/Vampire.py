@@ -13,6 +13,7 @@ class Vampire(pygame.sprite.Sprite):
         # Load spritesheets and create animations
         self.animations['idle'] = Animations.Animations(utils.load_spritesheet('Enemies/Countess_Vampire/Idle.png', 128, 128, 5), 60)  # 5 frames at 60 fps
         self.animations['walk'] = Animations.Animations(utils.load_spritesheet('Enemies/Countess_Vampire/Walk.png', 128, 128, 6), 60)  # 5 frames at 60 fps
+        self.animations['attack'] = Animations.Animations(utils.load_spritesheet('Enemies/Countess_Vampire/Attack_1.png', 128, 128, 6), 60, False)
 
         self.position, self.velocity = pygame.math.Vector2(position[0], position[1]), pygame.math.Vector2(0, 0)
         self.current_animation = self.animations['idle']  # Start with idle animation
@@ -147,24 +148,6 @@ class Vampire(pygame.sprite.Sprite):
             self.current_animation = self.animations['attack']
             self.update_image()
             # Do not reset here; let the update method handle the animation progression
-
-    # method for checking attack hits
-    def check_attack_hits(self, player):
-        if player.health > 0:  # Only check if the player is alive
-                if pygame.sprite.collide_mask(self, player):
-                    if self.FACING_LEFT:
-                        if self.rect.left - player.rect.right < 20:  # Check distance to the player
-                            player.health -= 10  # Damage dealt
-                            print("Player hit! Health:", player.health)
-                    else:
-                        if player.rect.left - self.rect.right < 20:
-                            player.health -= 10
-                            print("player hit! Health:", player.health)
-
-                    # Check if enemy health is now zero or below
-                    if player.health <= 0:
-                        print("player has died!")
-                        player.kill() # kill player sprite
     
     def check_attack(self, player):
         current_time = pygame.time.get_ticks()
