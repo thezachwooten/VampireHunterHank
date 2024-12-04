@@ -32,8 +32,15 @@ class Vampire(pygame.sprite.Sprite):
         
         self.acceleration = pygame.math.Vector2(0, self.gravity)
 
-        self.health = 100 # Initilize Vampire health to 100
-        self.isDead = False
+        self.health = 100 # Initilize ghoul health to 100
+        self.isDead = False # Ghoul is not dead
+        self.is_dying = False # Ghoul is not dying 
+
+        self.is_attacking = False # Ghoul is not attacking  
+        self.attack_cooldown = 500  # cooldown in milliseconds
+        self.last_attack_time = 0 # 0 since last attack
+
+        self.player_detected = False # player is not detected
 
     def draw(self, surf, camera):
         # Draw the Vampire image using the camera offset
@@ -52,12 +59,26 @@ class Vampire(pygame.sprite.Sprite):
 
 
     def update(self, dt, player, ground_tile, camera, playerSG):
-        self.horizontal_movement(dt)
-        self.move_ai()
+        # check if player is deteced
+        if not self.is_dying:
+            self.horizontal_movement(dt)
+            self.move_ai() # move
+            self.check_attack(player) # check if player can be attacked and attack if so
         # check if health reaches zero
-        if self.health <= 0:
-            self.kill()
-
+        if self.health <= 0 and not self.is_dying:
+            # Set the current animation to death
+            self.current_animation = self.animations['death']
+            self.death_start_time = pygame.time.get_ticks()
+            self.animation_length = self.current_animation.get_duration()
+            self.is_dying = True
+        
+        # In your update method
+        if self.is_dying:
+            self.velocity.x = 0
+            # Check if the animation has reached end and is the death animation
+            if self.current_animation.is_finished and self.current_animation == self.animations['death']:
+                # Delete the sprite after the animation completes
+                self.kill()
         # Update the current animation
         self.current_animation.update(dt)
         self.image = self.current_animation.get_current_frame()
@@ -117,3 +138,62 @@ class Vampire(pygame.sprite.Sprite):
                 self.last_move_time = current_time
                 self.state = 'pause'  # Switch to "pause" state
                 self.current_animation = self.animations['idle']
+
+    def attack(self):
+        current_time = pygame.time.get_ticks()
+        if not self.is_attacking and current_time - self.last_attack_time >= self.attack_cooldown:
+            self.is_attacking = True
+            self.last_attack_time = current_time
+            self.current_animation = self.animations['attack']
+            self.update_image()
+            # Do not reset here; let the update method handle the animation progression
+
+    # method for checking attack hits
+    def check_attack_hits(self, player):
+        if player.health > 0:  # Only check if the player is alive
+                if pygame.sprite.collide_mask(self, player):
+                    if self.FACING_LEFT:
+                        if self.rect.left - player.rect.right < 20:  # Check distance to the player
+                            player.health -= 10  # Damage dealt
+                            print("Player hit! Health:", player.health)
+                    else:
+                        if player.rect.left - self.rect.right < 20:
+                            player.health -= 10
+                            print("player hit! Health:", player.health)
+
+                    # Check if enemy health is now zero or below
+                    if player.health <= 0:
+                        print("player has died!")
+                        player.kill() # kill player sprite
+    
+    def check_attack(self, player):
+        current_time = pygame.time.get_ticks()
+        
+        # Check if within attack cooldown
+        if self.is_attacking and current_time - self.last_attack_time < self.attack_cooldown:
+            return
+        
+        # Collision-based attack initiation
+        if pygame.sprite.collide_mask(self, player):  # Pixel-perfect collision check
+            # Initiate attack if collision occurs
+            self.is_attacking = True
+            self.last_attack_time = current_time
+            self.current_animation = self.animations['attack']
+            
+            # Deal damage to the player
+            if player.health > 0:
+                player.health -= 20  # Apply damage
+                print(f"Player hit! Health: {player.health}")
+                
+                # Apply knockback based on enemy's position relative to the player
+                if self.rect.centerx < player.rect.centerx:
+                    player.velocity.x += 10  # Knockback to the right
+                else:
+                    player.velocity.x -= 10  # Knockback to the left
+
+            # Check if the player's health reaches zero
+            if player.health <= 0:
+                print("Player has died!")
+        else:
+            # Reset attacking state if not colliding
+            self.is_attacking = False
