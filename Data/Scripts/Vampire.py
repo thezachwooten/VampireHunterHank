@@ -38,8 +38,10 @@ class Vampire(pygame.sprite.Sprite):
         self.is_dying = False # Ghoul is not dying 
 
         self.is_attacking = False # Ghoul is not attacking  
-        self.attack_cooldown = 500  # cooldown in milliseconds
-        self.last_attack_time = 0 # 0 since last attack
+        self.attack_cooldown = 1.0  # Time between attacks
+        self.last_attack_time = 0
+        self.attack_width = 50  # Width of attack rect
+        self.attack_height = 50  # Height of attack rect
 
         self.player_detected = False # player is not detected
 
@@ -47,6 +49,8 @@ class Vampire(pygame.sprite.Sprite):
         # Draw the Vampire image using the camera offset
         surf.blit(self.image, camera.apply(self.rect))
         pygame.draw.rect(surf, (255, 0, 0), camera.apply(self.rect), 2)  # Debug: rect around Vampire image
+        attack_rect = self.get_attack_rect()
+        pygame.draw.rect(surf, (255, 0, 0), camera.apply(attack_rect), 2)  # Draw a red outline
 
     # Helper function to update image/mask
     def update_image(self):
@@ -64,7 +68,8 @@ class Vampire(pygame.sprite.Sprite):
         if not self.is_dying:
             self.horizontal_movement(dt)
             self.move_ai() # move
-            self.check_attack(player) # check if player can be attacked and attack if so
+            if self.can_attack(player): # check if player can be attacked and attack if so
+                self.attack(player)
         # check if health reaches zero
         if self.health <= 0 and not self.is_dying:
             # Set the current animation to death
@@ -139,44 +144,38 @@ class Vampire(pygame.sprite.Sprite):
                 self.last_move_time = current_time
                 self.state = 'pause'  # Switch to "pause" state
                 self.current_animation = self.animations['idle']
-
-    def attack(self):
-        current_time = pygame.time.get_ticks()
-        if not self.is_attacking and current_time - self.last_attack_time >= self.attack_cooldown:
-            self.is_attacking = True
-            self.last_attack_time = current_time
-            self.current_animation = self.animations['attack']
-            self.update_image()
-            # Do not reset here; let the update method handle the animation progression
     
-    def check_attack(self, player):
-        current_time = pygame.time.get_ticks()
-        
-        # Check if within attack cooldown
-        if self.is_attacking and current_time - self.last_attack_time < self.attack_cooldown:
-            return
-        
-        # Collision-based attack initiation
-        if pygame.sprite.collide_mask(self, player):  # Pixel-perfect collision check
-            # Initiate attack if collision occurs
-            self.is_attacking = True
-            self.last_attack_time = current_time
-            self.current_animation = self.animations['attack']
-            
-            # Deal damage to the player
-            if player.health > 0:
-                player.health -= 20  # Apply damage
-                print(f"Player hit! Health: {player.health}")
-                
-                # Apply knockback based on enemy's position relative to the player
-                if self.rect.centerx < player.rect.centerx:
-                    player.velocity.x += 10  # Knockback to the right
-                else:
-                    player.velocity.x -= 10  # Knockback to the left
-
-            # Check if the player's health reaches zero
-            if player.health <= 0:
-                print("Player has died!")
+    def get_attack_rect(self):
+        if self.FACING_LEFT:  # Left
+            return pygame.Rect(self.rect.left - self.attack_width, self.rect.top, self.attack_width, self.attack_height)
         else:
-            # Reset attacking state if not colliding
-            self.is_attacking = False
+            return pygame.Rect(self.rect.right, self.rect.top, self.attack_width, self.attack_height)
+
+    def can_attack(self, player):
+        now = pygame.time.get_ticks() / 1000  # Current time in seconds
+        if now - self.last_attack_time < self.attack_cooldown:
+            return False  # Still on cooldown
+
+        # Check if the player is inside the attack rect
+        attack_rect = self.get_attack_rect()
+        return attack_rect.colliderect(player.rect)
+
+    def attack(self, player):
+        # attack animation
+        current_time = pygame.time.get_ticks()
+        self.is_attacking = True
+        self.last_attack_time = current_time
+        self.current_animation = self.animations['attack']
+        # Determine direction and execute attack logic
+        if player.rect.centerx > self.rect.centerx:
+            player.velocity.x += 10  # Knockback to the right
+            print("Attacking player to the right!")
+        else:
+            player.velocity.x -= 10  # Knockback to the left
+            print("Attacking player to the left!")
+
+        # Example: Reduce player's health or apply effects
+        player.health -= 10  # Example damage value
+
+        # Reset attack cooldown
+        self.last_attack_time = pygame.time.get_ticks() / 1000
