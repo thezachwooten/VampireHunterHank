@@ -8,7 +8,8 @@ from Data.Scripts.Background import * # import code for parallax effect
 from Data.Scripts.tiles import Tilemap # import tilemap code
 from Data.Scripts import Player # import player class
 from Data.Scripts import Ghoul # import ghoul class
-from Data.Scripts import Skeleton # import ghoul class
+from Data.Scripts import Skeleton # import skeleton class
+from Data.Scripts import Vampire # import Vampire class
 from Data.Scripts import Camera # import camera class
 from Data.Scripts import Projectile # import projectile class
 
@@ -71,6 +72,7 @@ class Game:
         self.playerSpawner = self.tile_map.get_tile_objects_with_masks(layer_name="Spawners", property_name="player")  # Get the tiles with rects and masks
         self.ghouldSpawner = self.tile_map.get_tile_objects_with_masks(layer_name="Spawners", property_name="ghoul")  # Get the tiles with rects and masks
         self.skeletonSpawner = self.tile_map.get_tile_objects_with_masks(layer_name="Spawners", property_name="skeleton")  # Get the tiles with rects and masks
+        self.vampireSpawner = self.tile_map.get_tile_objects_with_masks(layer_name="Spawners", property_name="vampire") # Get vampire spawner tiles
         self.portal_tiles = self.tile_map.get_tile_objects_with_masks(layer_name="Portals", property_name="collision") # Get portal tiles on map
 
         player_start_pos = next(iter(self.playerSpawner))  # Get the first (and only) sprite
@@ -91,6 +93,11 @@ class Game:
             start_x, start_y = skeletonSpawn.rect.x, skeletonSpawn.rect.y # Access position
             skeleton = Skeleton.Skeleton(self, (start_x,start_y))
             self.enemies.add(skeleton)
+        # Vampire
+        for vampireSpawn in self.vampireSpawner:
+            start_x, start_y = vampireSpawn.rect.x, vampireSpawn.rect.y # Access position
+            vamp = Vampire.Vampire(self, (start_x,start_y))
+            self.enemies.add(vamp)
 
         
 

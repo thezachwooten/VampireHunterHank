@@ -11,8 +11,8 @@ class Vampire(pygame.sprite.Sprite):
         self.animations = {}
 
         # Load spritesheets and create animations
-        self.animations['idle'] = Animations.Animations(utils.load_spritesheet('Enemies/Vampire/Countess_Vampire/Idle.png', 128, 128, 5), 60)  # 5 frames at 60 fps
-        self.animations['walk'] = Animations.Animations(utils.load_spritesheet('Enemies/Vampire/Countess_Vampire/Walk.png', 128, 128, 6), 60)  # 5 frames at 60 fps
+        self.animations['idle'] = Animations.Animations(utils.load_spritesheet('Enemies/Countess_Vampire/Idle.png', 128, 128, 5), 60)  # 5 frames at 60 fps
+        self.animations['walk'] = Animations.Animations(utils.load_spritesheet('Enemies/Countess_Vampire/Walk.png', 128, 128, 6), 60)  # 5 frames at 60 fps
 
         self.position, self.velocity = pygame.math.Vector2(position[0], position[1]), pygame.math.Vector2(0, 0)
         self.current_animation = self.animations['idle']  # Start with idle animation
@@ -47,12 +47,11 @@ class Vampire(pygame.sprite.Sprite):
         self.mask = pygame.mask.from_surface(self.image)
         self.bound_rect = self.mask.get_bounding_rects()[0]
         self.image = self.image.subsurface(self.bound_rect).copy()
-        self.image = pygame.transform.scale2x(self.image)
         self.rect = self.image.get_rect()
         self.rect.center = self.position
 
 
-    def update(self, dt):
+    def update(self, dt, player, ground_tile, camera, playerSG):
         self.horizontal_movement(dt)
         self.move_ai()
         # check if health reaches zero
