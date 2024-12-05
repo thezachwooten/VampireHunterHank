@@ -2,6 +2,7 @@ import pygame
 import random # module for random choice
 from Data.Scripts import utils
 from Data.Scripts import Animations
+from Data.Scripts import Projectile
 
 class Vampire(pygame.sprite.Sprite):
     # Constructor
@@ -27,7 +28,7 @@ class Vampire(pygame.sprite.Sprite):
         self.last_move_time = random.randint(0,5) # random time since last move
         self.state = 'pause'  # Start in the "move_left" state
         self.previous_state = 'move_left'
-        self.FACING_LEFT = False
+        self.FACING_LEFT = True
         self.MOVE_LEFT = False
         self.MOVE_RIGHT = False
         self.on_ground = False
@@ -44,12 +45,20 @@ class Vampire(pygame.sprite.Sprite):
         self.last_attack_time = 0
         self.attack_width = 50  # Width of attack rect
         self.attack_height = 50  # Height of attack rect
+        self.range_width = 200 # width of ranged rect
+        self.ranged_height = self.attack_height # set ranged rect height == attack_rect_height
 
-        self.player_detected = False # player is not detected
+        self.player_detected = False # player is not detected 
+        self.projectiles = pygame.sprite.Group()
 
     def draw(self, surf, camera):
         # Draw the Vampire image using the camera offset
         surf.blit(self.image, camera.apply(self.rect))
+        for projectile in self.projectiles:
+            projectile.draw(surf, camera) # draw 
+        # debug for range rect
+        range_rect = self.get_ranged_rect()
+        pygame.draw.rect(surf, (255, 0, 0), camera.apply(range_rect), 1) 
 
     # Helper function to update image/mask
     def update_image(self):
@@ -62,6 +71,9 @@ class Vampire(pygame.sprite.Sprite):
         if not self.is_dying:
             self.horizontal_movement(dt)
             self.move_ai() # move
+            if self.state == 'pause': # if vamp is paused, draw the detection rect in order to fire
+                if self.can_attack_range(player): # check if player can be seen ranged
+                    self.fireball() # shoot fireball
             if self.can_attack(player): # check if player can be attacked and attack if so
                 self.attack(player)
         # check if health reaches zero
@@ -79,6 +91,11 @@ class Vampire(pygame.sprite.Sprite):
             if self.current_animation.is_finished and self.current_animation == self.animations['death']:
                 # Delete the sprite after the animation completes
                 self.kill()
+        # Update projectiles
+        for projectile in self.projectiles:
+            if not projectile.is_alive:
+                projectile.kill()
+            projectile.update(dt, playerSG, ground_tile, camera.camera_rect)
         # Update the current animation
         self.current_animation.update(dt)
         self.image = self.current_animation.get_current_frame()
@@ -139,6 +156,7 @@ class Vampire(pygame.sprite.Sprite):
                 self.state = 'pause'  # Switch to "pause" state
                 self.current_animation = self.animations['idle']
     
+    # method for attack (melee) detection rect
     def get_attack_rect(self):
         if self.FACING_LEFT:  # Left
             return pygame.Rect((self.rect.left - self.attack_width + 50), self.rect.top + (self.rect.height /2 ), self.attack_width, self.attack_height)
@@ -171,5 +189,39 @@ class Vampire(pygame.sprite.Sprite):
         # Example: Reduce player's health or apply effects
         player.health -= 10  # Example damage value
 
+        # Reset attack cooldown
+        self.last_attack_time = pygame.time.get_ticks() / 1000
+
+    # method for attack (fireball) rect detection
+    def get_ranged_rect(self):
+        if self.FACING_LEFT:  # Left
+            return pygame.Rect((self.rect.left - self.range_width + 50), self.rect.top + (self.rect.height /2 ), self.range_width, self.ranged_height)
+        else:
+            return pygame.Rect(self.rect.right - 50, self.rect.top + (self.rect.height /2 ), self.range_width, self.ranged_height)
+    # method to check if able to attack rn
+    def can_attack_range(self, player):
+        now = pygame.time.get_ticks() / 1000  # Current time in seconds
+        if now - self.last_attack_time < self.attack_cooldown:
+            return False  # Still on cooldown
+
+        # Check if the player is inside the attack rect
+        range_rect = self.get_ranged_rect()
+        return range_rect.colliderect(player.rect)
+    # method to fire fireball
+    def fireball(self):
+        # attack animation
+        current_time = pygame.time.get_ticks()
+        self.is_attacking = True
+        self.last_attack_time = current_time
+        self.current_animation = self.animations['attack']
+        # create a new fireball
+        fireball = Projectile.Projectile(
+            image= None,
+            pos= (self.rect.right if not self.FACING_LEFT else self.rect.left, self.rect.centery),
+            vel=(-3 if self.FACING_LEFT else 3, 0),  # Direction based on facing
+            animated = True,
+            anims = Animations.Animations(utils.load_separate_frames_from_img("Projectiles/Fireball", 5), 60) # give fireball animations 
+            )
+        self.projectiles.add(fireball)
         # Reset attack cooldown
         self.last_attack_time = pygame.time.get_ticks() / 1000
