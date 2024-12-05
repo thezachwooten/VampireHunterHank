@@ -22,6 +22,7 @@ class GameState(Enum):
     PLAYING = 1
     GAME_OVER = 2
     NEXT_LEVEL = 3
+    COMPLETION = 4
 
 class Game:
     # Game Constructor
@@ -41,7 +42,7 @@ class Game:
 
         self.levels = ['Forest', 'Cemetary', 'Castle']
 
-        self.curLevel = 2 # 0-2; 3 total level choices
+        self.curLevel = 0 # 0-2; 3 total level choices
 
         # initialize level
         self.load_level() # this defaults to 'Forest' as curLevel is initialized to 0
