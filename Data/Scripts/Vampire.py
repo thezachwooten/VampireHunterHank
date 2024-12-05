@@ -56,9 +56,6 @@ class Vampire(pygame.sprite.Sprite):
         surf.blit(self.image, camera.apply(self.rect))
         for projectile in self.projectiles:
             projectile.draw(surf, camera) # draw 
-        # debug for range rect
-        range_rect = self.get_ranged_rect()
-        pygame.draw.rect(surf, (255, 0, 0), camera.apply(range_rect), 1) 
 
     # Helper function to update image/mask
     def update_image(self):

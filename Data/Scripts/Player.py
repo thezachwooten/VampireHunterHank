@@ -73,7 +73,6 @@ class Player(pygame.sprite.Sprite):
             self.offsetRect.y -= self.rect.height - 25
         # Draw the player image using the camera offset 
         surf.blit(self.image, camera.apply(self.offsetRect))
-        pygame.draw.rect(surf, (255, 0, 0), camera.apply(self.rect), 2)  # Debug: rect around player image
         # draw healthbar
         # Health bar
         self.draw_health_bar(surf)
