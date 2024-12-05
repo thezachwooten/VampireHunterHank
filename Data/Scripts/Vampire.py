@@ -15,7 +15,7 @@ class Vampire(pygame.sprite.Sprite):
         # Load spritesheets and create animations
         self.animations['idle'] = Animations.Animations(utils.load_spritesheet('Enemies/Countess_Vampire/Idle.png', 128, 128, 5), 60)  # 5 frames at 60 fps
         self.animations['walk'] = Animations.Animations(utils.load_spritesheet('Enemies/Countess_Vampire/Walk.png', 128, 128, 6), 60)  # 5 frames at 60 fps
-        self.animations['attack'] = Animations.Animations(utils.load_spritesheet('Enemies/Countess_Vampire/Attack_1.png', 128, 128, 6), 60, False)
+        self.animations['attack'] = Animations.Animations(utils.load_spritesheet('Enemies/Countess_Vampire/Attack_1.png', 128, 128, 6), 120, False)
         self.animations['death'] = Animations.Animations(utils.load_spritesheet('Enemies/Countess_Vampire/Dead.png', 128, 128, 8), 60, False) # Death
 
         self.position, self.velocity = pygame.math.Vector2(position[0], position[1]), pygame.math.Vector2(0, 0)
@@ -28,7 +28,7 @@ class Vampire(pygame.sprite.Sprite):
         self.last_move_time = random.randint(0,5) # random time since last move
         self.state = 'pause'  # Start in the "move_left" state
         self.previous_state = 'move_left'
-        self.FACING_LEFT = True
+        self.FACING_LEFT = random.choice([True, False])
         self.MOVE_LEFT = False
         self.MOVE_RIGHT = False
         self.on_ground = False
@@ -209,19 +209,27 @@ class Vampire(pygame.sprite.Sprite):
         return range_rect.colliderect(player.rect)
     # method to fire fireball
     def fireball(self):
-        # attack animation
-        current_time = pygame.time.get_ticks()
-        self.is_attacking = True
-        self.last_attack_time = current_time
-        self.current_animation = self.animations['attack']
-        # create a new fireball
-        fireball = Projectile.Projectile(
-            image= None,
-            pos= (self.rect.right if not self.FACING_LEFT else self.rect.left, self.rect.centery),
-            vel=(-3 if self.FACING_LEFT else 3, 0),  # Direction based on facing
-            animated = True,
-            anims = Animations.Animations(utils.load_separate_frames_from_img("Projectiles/Fireball", 5), 60) # give fireball animations 
+        # Start the attack animation if not already attacking
+        if not self.is_attacking and len(self.projectiles) < 1:
+            self.is_attacking = True
+            self.current_animation = self.animations['attack']
+            self.attack_start_time = pygame.time.get_ticks()  # Record when the animation started
+
+        # Check if the animation has finished
+        animation_duration = self.current_animation.get_duration()  # Get the total duration of the attack animation
+        elapsed_time = pygame.time.get_ticks() - self.attack_start_time  # Calculate how much time has passed
+
+        if elapsed_time >= animation_duration + 200:
+            # Create the fireball after the animation is complete
+            fireball = Projectile.Projectile(
+                image=None,
+                pos=(self.rect.right if not self.FACING_LEFT else self.rect.left, self.rect.centery + 10),
+                vel=(-3 if self.FACING_LEFT else 3, 0),  # Direction based on facing
+                animated=True,
+                anims=Animations.Animations(utils.load_separate_frames_from_img("Projectiles/Fireball", 5), 60)  # Fireball animations
             )
-        self.projectiles.add(fireball)
-        # Reset attack cooldown
-        self.last_attack_time = pygame.time.get_ticks() / 1000
+            self.projectiles.add(fireball)
+
+            # Reset the attack state
+            self.is_attacking = False
+            self.last_attack_time = pygame.time.get_ticks() / 1000  # Reset cooldown timer
