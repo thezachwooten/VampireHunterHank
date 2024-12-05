@@ -69,7 +69,7 @@ class Vampire(pygame.sprite.Sprite):
             self.horizontal_movement(dt)
             self.move_ai() # move
             if self.state == 'pause': # if vamp is paused, draw the detection rect in order to fire
-                if self.can_attack_range(player): # check if player can be seen ranged
+                if self.can_attack_range(player) and len(self.projectiles) < 1: # check if player can be seen ranged
                     self.fireball() # shoot fireball
             if self.can_attack(player): # check if player can be attacked and attack if so
                 self.attack(player)
@@ -216,7 +216,7 @@ class Vampire(pygame.sprite.Sprite):
         animation_duration = self.current_animation.get_duration()  # Get the total duration of the attack animation
         elapsed_time = pygame.time.get_ticks() - self.attack_start_time  # Calculate how much time has passed
 
-        if elapsed_time >= animation_duration + 200:
+        if elapsed_time >= animation_duration + 800:
             # Create the fireball after the animation is complete
             fireball = Projectile.Projectile(
                 image=None,
