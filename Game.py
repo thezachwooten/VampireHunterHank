@@ -98,9 +98,7 @@ class Game:
         for vampireSpawn in self.vampireSpawner:
             start_x, start_y = vampireSpawn.rect.x, vampireSpawn.rect.y # Access position
             vamp = Vampire.Vampire(self, (start_x,start_y))
-            self.enemies.add(vamp)
-
-        
+            self.enemies.add(vamp)  
 
     
 
@@ -117,7 +115,7 @@ class Game:
             self.load_level()
         else:
             print("Congratulations! You've completed all levels. Maybe I'll add a fancy screen for this")
-            self.state = GameState.GAME_OVER
+            self.state = GameState.COMPLETION
     
     # Main Game method
     def run(self):
@@ -146,6 +144,9 @@ class Game:
             elif self.state == GameState.GAME_OVER: # Game is over
                 # draw game over
                 self.display_game_over()
+            elif self.state == GameState.COMPLETION: # Game is complete
+                # draw finish screen
+                self.display_game_won()
             
 
             pygame.display.update()
@@ -191,6 +192,15 @@ class Game:
         font = pygame.font.Font("./Data/Fonts/gothic.ttf", 74)
         text = font.render("Game Over", True, (255, 0 , 0))
         text_rect = text.get_rect(center=(SCREEN_HEIGHT // 2, SCREEN_HEIGHT // 2))
+        self.screen.blit(text, text_rect)
+        pygame.display.flip()
+
+    def display_game_won(self):
+        # displays game over (win) screen
+        self.screen.fill((0,0,0))
+        font = pygame.font.Font("./Data/Fonts/gothic.ttf", 35)
+        text = font.render("GAME COMPLETE. You Win!", True, (0, 255 , 0))
+        text_rect = text.get_rect(center=(SCREEN_HEIGHT // 2, SCREEN_HEIGHT // 2 - 100))
         self.screen.blit(text, text_rect)
         pygame.display.flip()
 
