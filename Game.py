@@ -23,6 +23,7 @@ class GameState(Enum):
     GAME_OVER = 2
     NEXT_LEVEL = 3
     COMPLETION = 4
+    TRANSITION = 5
 
 class Game:
     # Game Constructor
@@ -42,7 +43,7 @@ class Game:
 
         self.levels = ['Forest', 'Cemetary', 'Castle']
 
-        self.curLevel = 0 # 0-2; 3 total level choices
+        self.curLevel = 2 # 0-2; 3 total level choices
 
         # initialize level
         self.load_level() # this defaults to 'Forest' as curLevel is initialized to 0
@@ -100,7 +101,27 @@ class Game:
             vamp = Vampire.Vampire(self, (start_x,start_y))
             self.enemies.add(vamp)  
 
-    
+    def handle_transition(self):
+        transition_duration = 1000  # Duration in milliseconds
+        current_time = pygame.time.get_ticks()
+        elapsed_time = current_time - self.transition_start_time
+
+        fade_surface = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
+        fade_surface.fill((0, 0, 0))
+
+        # Calculate alpha based on elapsed time
+        if elapsed_time < transition_duration // 2:  # Fade out
+            alpha = int((elapsed_time / (transition_duration // 2)) * 255)
+        elif elapsed_time < transition_duration:  # Fade in
+            alpha = int(((transition_duration - elapsed_time) / (transition_duration // 2)) * 255)
+        else:  # Transition complete
+            self.curLevel += 1
+            self.load_level()
+            self.state = GameState.PLAYING  # Return to playing state
+            return
+
+        fade_surface.set_alpha(alpha)
+        self.screen.blit(fade_surface, (0, 0))
 
     # method to check if game is over
     def checkGameOver(self):
@@ -111,8 +132,8 @@ class Game:
     def nextLevel(self):
         # Switch to next level or print gameover if final level reached
         if self.curLevel < len(self.levels) - 1:
-            self.curLevel += 1
-            self.load_level()
+            self.state = GameState.TRANSITION  # Set to transition state
+            self.transition_start_time = pygame.time.get_ticks()  # Record start time
         else:
             print("Congratulations! You've completed all levels. Maybe I'll add a fancy screen for this")
             self.state = GameState.COMPLETION
@@ -147,6 +168,8 @@ class Game:
             elif self.state == GameState.COMPLETION: # Game is complete
                 # draw finish screen
                 self.display_game_won()
+            elif self.state == GameState.TRANSITION:
+                self.handle_transition()
             
 
             pygame.display.update()
@@ -196,11 +219,13 @@ class Game:
         pygame.display.flip()
 
     def display_game_won(self):
-        # displays game over (win) screen
-        self.screen.fill((0,0,0))
+        # Displays the game completion (win) screen
+        self.screen.fill((0, 0, 0))
         font = pygame.font.Font("./Data/Fonts/gothic.ttf", 35)
-        text = font.render("GAME COMPLETE. You Win!", True, (0, 255 , 0))
-        text_rect = text.get_rect(center=(SCREEN_HEIGHT // 2, SCREEN_HEIGHT // 2 - 100))
+        text = font.render("GAME COMPLETE. You Win!", True, (0, 255, 0))
+        
+        # Correctly center the text based on the screen width and height
+        text_rect = text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
         self.screen.blit(text, text_rect)
         pygame.display.flip()
 
